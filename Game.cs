@@ -12,6 +12,7 @@ using SharpDX.IO;
 
 namespace SphereDivision
 {
+
     /*
 	Features to add:
 	quad faces
@@ -30,8 +31,8 @@ namespace SphereDivision
         // each point has a position and velocity
 
         int numCritters = 4;
-        const int maxCritters = 20;
-        const int maxPoints = 16384;
+        const int maxCritters = 60;
+        const int maxPoints = 1601;
         Vector2[,] bPos = new Vector2[maxCritters, maxPoints];
         float[,] zPos = new float[maxCritters, maxPoints];
         Vector2[,] bVel = new Vector2[maxCritters, maxPoints];
@@ -50,29 +51,43 @@ namespace SphereDivision
         //brightness cycle mode, size cycle mode
 
         float lineWidth = 4f;
-
-        int trailLength = 100; //number from 1 to maxpoints, how many trailing points are drawn and tracked
+        bool edgesOn = false;
+        int trailLength = 6; //number from 1 to maxpoints, how many trailing points are drawn and tracked
+        public int polygonLength = 4; //for mystify and bowtie drawing styles
 
         Vector3[] lookupHSL = new Vector3[768]; //Hue is looked up, Saturation and Lightness (if <1) are calculated
         // gives full saturation of indexed hue 0-767
 
-        bool gravOn = false;
-        float gravStrength = 0.1f;
+        float mouseGravStrength = 0.1f;
         int MouseGrav = 0;// Mouse cursor acts as an attractor.
         //0= off
         //1= directional (distance doesn't matter)
         //2= linear falloff
         //3= Squared Falloff
 
-        bool rainbowMode = true;
+        int rainbowMode = 3;
         int rainbowPosition = 0; //current rainbow color to lookup in hue chart
+        int rainbowSpeed = 5; //how fast the colors cycle
         bool brightnessMode = true;
-        float[] brightnessValue = new float [maxCritters];
+        float[] brightnessValue = new float[maxCritters];
         float[] brightnessDir = new float[maxCritters];
         float brightnessCycleSpeed = 0.1f;
         int brightnessCycleNotch = 0; //various preset speeds to select from
+        bool brightnessSynch = false; //if true, all brightness is set to the same value all the time
 
         bool attractorMode = false;
+
+        // gravpoints have their own separate physics params and routines
+        bool gravMode = true;
+        bool showGravPoints = true; //draw them visibly
+        int numGravPoints = 4;
+        const int maxGravPoints = 16;
+        Vector2[] gPos = new Vector2[maxGravPoints];
+        Vector2[] gVel = new Vector2[maxGravPoints];
+        float gravPointStrength = 0.05f;
+        int gravFalloff = 1; //0 = Directional, 1 = 1/dist, 2 = 1/dist^2
+        float maxGravSpeed = 0.5f;
+        float minGravSpeed = 0.05f;
 
         bool SoundReaction = false;
         string soundFile = ""; //sound file to play and react to
@@ -145,9 +160,30 @@ namespace SphereDivision
 
         }
 
+        Form1 settingsForm;
+
+        /// <summary>
+        /// writes current game settings to the visible form for users to see
+        /// </summary>
+        void sendSettings()
+        {
+
+        }
+        /// <summary>
+        /// gets settings from the visible form and writes to internal values
+        /// </summary>
+        void readSettings()
+        {
+
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            settingsForm = new Form1();
+            settingsForm.Show();
+            sendSettings();
 
             //for 4d testing:
             //binocular = false;
@@ -285,11 +321,34 @@ namespace SphereDivision
         }
 
 
-        float largest = 1f;
+        void getSettingsFromForm()
+        {
+            if (settingsForm.requestExit) Exit();
+
+            numCritters = settingsForm.numCritters;
+            polygonLength = settingsForm.polygonLength;
+            connectMode = settingsForm.connectMode;
+            edgesOn = settingsForm.edgesOn;
+            trailLength = settingsForm.trailLength;
+            rainbowSpeed = settingsForm.rainbowSpeed;
+            rainbowMode = settingsForm.rainbowMode;
+            brightnessMode = settingsForm.brightnessMode;
+            brightnessCycleSpeed = settingsForm.brightnessCycleSpeed;
+            lineWidth = settingsForm.lineWidth;
+
+            if (settingsForm.restartNow)
+            {
+                settingsForm.restartNow = false;
+                initCritters();
+            }
+
+        }
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
+
+            getSettingsFromForm();
 
             //if (soundOn>0) playSounds();
 
@@ -304,6 +363,9 @@ namespace SphereDivision
                 fps = 0;
             }
             lastTime = curTime;
+            settingsForm.showFPS(fpsCount, deltaTime);
+
+            if (settingsForm.paused) return;
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -358,19 +420,95 @@ namespace SphereDivision
                         switch (MouseGrav)
                         {
                             case 1: //directional only
-                                bVel[c, 0] += (direction * gravStrength);
+                                bVel[c, 0] += (direction * mouseGravStrength);
                                 break;
                             case 2:
                                 //dist = g.Length;
-                                bVel[c, 0] += (direction * gravStrength / dist);
+                                bVel[c, 0] += (direction * mouseGravStrength / dist);
                                 break;
                             case 3:
                                 dist = dist * dist;
-                                bVel[c, 0] += (direction * gravStrength / dist);
+                                bVel[c, 0] += (direction * mouseGravStrength / dist);
                                 break;
                         }
 
                     }
+                }
+            }
+
+            //apply Points Gravity (if enabled)
+            if (gravMode)
+            {
+                for (int g = 0; g < numGravPoints; g++)
+                {
+                    //Move them forward by their velocity
+                    gPos[g] += gVel[g] * deltaTime;
+
+                    //keep them on-screen
+                    if (gPos[g].X < screenLeft)
+                    {
+                        gPos[g].X = screenLeft + (screenLeft - gPos[g].X);
+                        gVel[g].X = (float)random.NextDouble() * maxGravSpeed;
+                    }
+                    else if (gPos[g].X > screenRight)
+                    {
+                        gPos[g].X = screenRight - (gPos[g].X - screenRight);
+                        gVel[g].X = -(float)random.NextDouble() * maxGravSpeed;
+                    }
+
+                    if (gPos[g].Y < screenTop)
+                    {
+                        gPos[g].Y = screenTop + (screenTop - gPos[g].Y);
+                        gVel[g].Y = (float)random.NextDouble() * maxGravSpeed;
+                    }
+                    else if (gPos[g].Y > screenBot)
+                    {
+                        gPos[g].Y = screenBot - (gPos[g].Y - screenBot);
+                        gVel[g].Y = -(float)random.NextDouble() * maxGravSpeed;
+                    }
+                }
+                if (showGravPoints)
+                {
+                    for (int g = 0; g < numGravPoints; g++)
+                    {
+                        GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Lines);
+                        GL.Color3(0.5f, 0.5f, 0.5f);
+                        GL.Vertex2(gPos[g].X - 6, gPos[g].Y);
+                        GL.Vertex2(gPos[g].X + 6, gPos[g].Y);
+                        GL.End();
+                        GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Lines);
+                        GL.Vertex2(gPos[g].X, gPos[g].Y - 6);
+                        GL.Vertex2(gPos[g].X, gPos[g].Y + 6);
+                        GL.End();
+                    }
+                }
+                for (int c = 0; c < maxCritters; c++)
+                {
+                    for (int g = 0; g < numGravPoints; g++)
+                    {
+                        //get vector pointing from point to gravwell
+                        Vector2 gravVector = gPos[g] - bPos[c, 0];
+                        float dist = gravVector.Length;
+                        Vector2 direction = gravVector.Normalized();
+                        if (dist > 0.1f)
+                        {
+                            switch (gravFalloff)
+                            {
+                                case 0:
+                                    bVel[c, 0] += (direction * gravPointStrength * deltaTime);
+                                    break;
+                                case 1:
+                                    bVel[c, 0] += (direction * gravPointStrength * deltaTime / dist);
+                                    break;
+                                case 2:
+                                    dist = dist * dist;
+                                    bVel[c, 0] += (direction * gravPointStrength * deltaTime / dist);
+                                    break;
+                            }
+
+                        }
+                    }
+                    LimitVelocity(c); //don't let gravpoints fling them too fast!
                 }
             }
 
@@ -421,7 +559,7 @@ namespace SphereDivision
                     //Console.WriteLine(bPos[c, 0].X + ", " + bPos[c, 0].Y + ", " + zPos[c, 0]);
 
 
-                    if (rainbowMode)
+                    if (rainbowMode == 3)
                     {
                         bColor[c, 0] = lookupHSL[rainbowPosition];
                     }
@@ -433,85 +571,151 @@ namespace SphereDivision
             }
             else
             {
-                //update point locations and velocities
-                for (int c = 0; c < maxCritters; c++)
+
+                if (edgesOn)
                 {
-                    bPos[c, 1] = bPos[c, 0];
-                    bPos[c, 0] += bVel[c, 0] * deltaTime;
+                    //update point locations and velocities
+                    for (int c = 0; c < maxCritters; c++)
+                    {
+                        bPos[c, 1] = bPos[c, 0];
+                        bPos[c, 0] += bVel[c, 0] * deltaTime;
 
-                    if (rainbowMode)
-                    {
-                        bColor[c, 0] = lookupHSL[rainbowPosition] * brightnessValue[c];
-                    }
-                    else
-                    {
-                        bColor[c, 0] = new Vector3(1f, 1f, 1f) * brightnessValue[c];
-                    }
+                        if (rainbowMode == 3)
+                        {
+                            bColor[c, 0] = lookupHSL[rainbowPosition] * brightnessValue[c];
+                        }
+                        else
+                        {
+                            bColor[c, 0] = new Vector3(1f, 1f, 1f) * brightnessValue[c];
+                        }
 
-                    //Edge Detection
-                    if (bPos[c, 0].X < screenLeft)
-                    {
-                        bPos[c, 0].X = screenLeft + (screenLeft - bPos[c, 0].X);
-                        bVel[c, 0].X = (float)random.NextDouble() * maxVel;
-                        LimitVelocity(c);
-                    }
-                    else if (bPos[c, 0].X > screenRight)
-                    {
-                        bPos[c, 0].X = screenRight - (bPos[c, 0].X - screenRight);
-                        bVel[c, 0].X = -(float)random.NextDouble() * maxVel;
-                        LimitVelocity(c);
-                    }
+                        //Edge Detection
+                        if (bPos[c, 0].X < screenLeft)
+                        {
+                            bPos[c, 0].X = screenLeft + (screenLeft - bPos[c, 0].X);
+                            bVel[c, 0].X = (float)random.NextDouble() * maxVel;
+                            LimitVelocity(c);
+                        }
+                        else if (bPos[c, 0].X > screenRight)
+                        {
+                            bPos[c, 0].X = screenRight - (bPos[c, 0].X - screenRight);
+                            bVel[c, 0].X = -(float)random.NextDouble() * maxVel;
+                            LimitVelocity(c);
+                        }
 
-                    if (bPos[c, 0].Y < screenTop)
-                    {
-                        bPos[c, 0].Y = screenTop + (screenTop - bPos[c, 0].Y);
-                        bVel[c, 0].Y = (float)random.NextDouble() * maxVel;
-                        LimitVelocity(c);
+                        if (bPos[c, 0].Y < screenTop)
+                        {
+                            bPos[c, 0].Y = screenTop + (screenTop - bPos[c, 0].Y);
+                            bVel[c, 0].Y = (float)random.NextDouble() * maxVel;
+                            LimitVelocity(c);
+                        }
+                        else if (bPos[c, 0].Y > screenBot)
+                        {
+                            bPos[c, 0].Y = screenBot - (bPos[c, 0].Y - screenBot);
+                            bVel[c, 0].Y = -(float)random.NextDouble() * maxVel;
+                            LimitVelocity(c);
+                        }
                     }
-                    else if (bPos[c, 0].Y > screenBot)
-                    {
-                        bPos[c, 0].Y = screenBot - (bPos[c, 0].Y - screenBot);
-                        bVel[c, 0].Y = -(float)random.NextDouble() * maxVel;
-                        LimitVelocity(c);
-                    }
-
                 }
+                else //if edges are off, we just let things fly to double the screensize instead
+                {
+                    float lLeft = screenLeft * 2f;
+                    float lRight = screenRight * 2f;
+                    float lTop = screenTop * 2f;
+                    float lBottom = screenBot * 2f;
+                    //update point locations and velocities
+                    for (int c = 0; c < maxCritters; c++)
+                    {
+                        bPos[c, 1] = bPos[c, 0];
+                        bPos[c, 0] += bVel[c, 0] * deltaTime;
+
+                        if (rainbowMode == 3)
+                        {
+                            bColor[c, 0] = lookupHSL[rainbowPosition] * brightnessValue[c];
+                        }
+                        else
+                        {
+                            bColor[c, 0] = new Vector3(1f, 1f, 1f) * brightnessValue[c];
+                        }
+
+                        //Edge Detection
+
+                        if (bPos[c, 0].X < lLeft)
+                        {
+                            bPos[c, 0].X = lLeft + (lLeft - bPos[c, 0].X);
+                            bVel[c, 0].X = (float)random.NextDouble() * maxVel;
+                            LimitVelocity(c);
+                        }
+                        else if (bPos[c, 0].X > lRight)
+                        {
+                            bPos[c, 0].X = lRight - (bPos[c, 0].X - lRight);
+                            bVel[c, 0].X = -(float)random.NextDouble() * maxVel;
+                            LimitVelocity(c);
+                        }
+
+                        if (bPos[c, 0].Y < lTop)
+                        {
+                            bPos[c, 0].Y = lTop + (lTop - bPos[c, 0].Y);
+                            bVel[c, 0].Y = (float)random.NextDouble() * maxVel;
+                            LimitVelocity(c);
+                        }
+                        else if (bPos[c, 0].Y > lBottom)
+                        {
+                            bPos[c, 0].Y = lBottom - (bPos[c, 0].Y - lBottom);
+                            bVel[c, 0].Y = -(float)random.NextDouble() * maxVel;
+                            LimitVelocity(c);
+                        }
+                    }
+                }
+
+
             }
 
             Vector3 rainbowColor;
             rainbowColor = lookupHSL[rainbowPosition];
-            rainbowPosition += 5;
+            rainbowPosition += rainbowSpeed;
             if (rainbowPosition > 767) rainbowPosition = 0;
 
-            // to cycle brightness values
-            for (int c = 0; c < maxCritters; c++)
+            if (brightnessMode)
             {
-                brightnessValue[c] += brightnessDir[c];
-                if (brightnessValue[c] > 1f)
+                // to cycle brightness values
+                for (int c = 0; c < maxCritters; c++)
                 {
-                    brightnessValue[c] = 1f - (brightnessValue[c] - 1f);
-                    brightnessDir[c] = -brightnessCycleSpeed;
-                    if (brightnessValue[c] < 0f) brightnessValue[c] = 1f;
-                }
-                else if (brightnessValue[c] < 0f)
-                {
-                    brightnessDir[c] = brightnessCycleSpeed;
-                    brightnessValue[c] = -brightnessValue[c];
-                    if (brightnessValue[c] > 1f) brightnessValue[c] = 0f;
+                    brightnessValue[c] += brightnessDir[c];
+                    if (brightnessValue[c] > 1f)
+                    {
+                        brightnessValue[c] = 1f - (brightnessValue[c] - 1f);
+                        brightnessDir[c] = -brightnessCycleSpeed;
+                        if (brightnessValue[c] < 0f) brightnessValue[c] = 1f;
+                    }
+                    else if (brightnessValue[c] < 0f)
+                    {
+                        brightnessDir[c] = brightnessCycleSpeed;
+                        brightnessValue[c] = -brightnessValue[c];
+                        if (brightnessValue[c] > 1f) brightnessValue[c] = 0f;
+                    }
                 }
             }
+            else
+            {
+                for (int c = 0; c < maxCritters; c++)
+                {
+                    brightnessValue[c] = 1f;
+                }
+            }
+
 
             if (connectMode == 0)
             {
                 advanceTrailingPoints();
 
                 // draw each point's position
-                for (int c = 0; c < maxCritters; c++)
+                for (int c = 0; c < numCritters; c++)
                 {
                     GL.LineWidth(lineWidth);
                     GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineStrip);
                     for (int p = 1; p < trailLength; p++)
-                    { 
+                    {
                         GL.Color3(bColor[c, p]);
                         GL.Vertex2(bPos[c, p]);
                     }
@@ -523,7 +727,7 @@ namespace SphereDivision
                 advanceTrailingPoints();
 
                 // draw each point's position
-                for (int c = 0; c < maxCritters; c++)
+                for (int c = 0; c < numCritters; c++)
                 {
                     //float sSize = lineWidth * 3f;
                     GL.LineWidth(lineWidth);
@@ -544,11 +748,11 @@ namespace SphereDivision
                 advanceTrailingPoints();
 
                 // draw each point's position
-                for (int c = 0; c < maxCritters; c++)
+                for (int c = 0; c < numCritters; c++)
                 {
 
                     GL.LineWidth(lineWidth);
-                    
+
                     for (int p = 1; p < trailLength; p++)
                     {
                         float sSize = new Vector2(bPos[c, p].X - bPos[c, p - 1].X, bPos[c, p].Y - bPos[c, p - 1].Y).Length / 2f;
@@ -575,24 +779,74 @@ namespace SphereDivision
 
                 advanceTrailingPoints();
                 // draw each point's position
-                for (int c = 0; c < maxCritters; c += 4)
+                int maxUsed = (int)(numCritters / polygonLength) * polygonLength;
+                if (maxUsed == 0)
+                { //we ended up in a situation where the numcritters is too low
+                    numCritters = polygonLength;
+                    settingsForm.numCritters = numCritters;
+                    maxUsed = polygonLength;
+                    initCritters(); //reset just in case
+                }
+                for (int c = 0; c < maxUsed; c += polygonLength)
                 {
                     float sSize = lineWidth * 3f;
                     GL.LineWidth(lineWidth);
-                    
-                    for (int p = 0; p < 8; p++)
+
+                    for (int p = 0; p < trailLength; p++)
                     {
                         GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
                         GL.Color3(bColor[c, p]);
-                        GL.Vertex2(bPos[c, p]);
-                        GL.Vertex2(bPos[c + 1, p]);
-                        GL.Vertex2(bPos[c + 2, p]);
-                        GL.Vertex2(bPos[c + 3, p]);
+                        for (int v = 0; v < polygonLength; v++)
+                        {
+                            GL.Vertex2(bPos[c + v, p]);
+                        }
                         GL.End();
                     }
                 }
             }
+            else if (connectMode == 4) //Solid Mystify (Bowties)
+            {
 
+                advanceTrailingPoints();
+                // draw each point's position
+                int maxUsed = (int)(numCritters / polygonLength) * polygonLength;
+                if (maxUsed == 0)
+                { //we ended up in a situation where the numcritters is too low
+                    numCritters = polygonLength;
+                    settingsForm.numCritters = numCritters;
+                    maxUsed = polygonLength;
+                    initCritters(); //reset just in case
+                }
+                for (int c = 0; c < maxUsed; c += polygonLength)
+                {
+                    float sSize = lineWidth * 3f;
+                    GL.LineWidth(lineWidth);
+
+                    for (int p = 0; p < trailLength; p++)
+                    {
+                        for (int v = 0; v < polygonLength - 1; v++)
+                        {
+                            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
+                            GL.Color3(bColor[c, p]);
+
+                            GL.Vertex2(bPos[c + v, p]);
+                            GL.Vertex2(bPos[c + v + 1, p]);
+                            GL.Vertex2(bPos[c + v + 1, p + 1]);
+                            GL.Vertex2(bPos[c + v, p + 1]);
+                            GL.End();
+
+                        }
+                        GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
+                        GL.Color3(bColor[c, p]);
+                        GL.Vertex2(bPos[c + polygonLength - 1, p]);
+                        GL.Vertex2(bPos[c, p]);
+                        GL.Vertex2(bPos[c, p + 1]);
+                        GL.Vertex2(bPos[c + polygonLength - 1, p + 1]);
+                        GL.End();
+
+                    }
+                }
+            }
 
             GL.Flush();
             SwapBuffers();
@@ -664,7 +918,7 @@ namespace SphereDivision
             if (keyboard.IsKeyDown(Key.Space) && !lastkeyboard.IsKeyDown(Key.Space))
             {
                 connectMode++;
-                if (connectMode > 3) connectMode = 0;
+                if (connectMode > 4) connectMode = 0;
             }
 
             if (keyboard.IsKeyDown(Key.M) && !lastkeyboard.IsKeyDown(Key.M))
@@ -675,11 +929,14 @@ namespace SphereDivision
 
             if (keyboard.IsKeyDown(Key.R) && !lastkeyboard.IsKeyDown(Key.R))
             {
-                rainbowMode = !rainbowMode;
+                rainbowMode++;
+                if (rainbowMode > 3) rainbowMode = 0;
             }
 
             if (keyboard.IsKeyDown(Key.Escape) && !lastkeyboard.IsKeyDown(Key.Escape))
             {
+                //settingsForm.Show();
+                settingsForm.Focus();
                 if (inputMode)
                 {
                     inputMode = false;
@@ -696,7 +953,6 @@ namespace SphereDivision
                     }
                 }
 
-                
             }
             if (wasPressed(Key.Y) && exitQuestion) Exit();
 
@@ -743,7 +999,7 @@ namespace SphereDivision
                 }
             }
 
-            if (wasPressed(Key.U)) Console.WriteLine(largest);
+            if (wasPressed(Key.E)) edgesOn = !edgesOn;
 
             if (wasPressed(Key.Right) || keysHeld[(int)keysUsed.Right])
             {
@@ -925,8 +1181,25 @@ namespace SphereDivision
                     bVel[c, p].Y = bVel[c, 0].Y;
                     bColor[c, p] = new Vector3(0f, 0f, 0f);
                 }
-                brightnessValue[c] = (float)r.NextDouble();
-                brightnessDir[c] = 0.1f;
+                if (brightnessSynch)
+                {
+                    brightnessValue[c] = 0f;
+                    brightnessDir[c] = 0.1f;
+                }
+                else
+                {
+                    brightnessValue[c] = (float)r.NextDouble();
+                    brightnessDir[c] = 0.1f;
+                }
+            }
+
+            //also initialize the grav points here
+            for (int g = 0; g < maxGravPoints; g++)
+            {
+                gPos[g].X = screenLeft + ((float)r.NextDouble() * (screenRight - screenLeft));
+                gPos[g].Y = screenTop + ((float)r.NextDouble() * (screenBot - screenTop));
+                gVel[g].X = (float)r.NextDouble() * maxGravSpeed;
+                gVel[g].Y = (float)r.NextDouble() * maxGravSpeed;
             }
 
 
