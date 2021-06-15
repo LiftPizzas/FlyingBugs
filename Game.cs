@@ -31,13 +31,17 @@ namespace SphereDivision
         // each point has a position and velocity
 
         int numCritters = 4;
-        const int maxCritters = 60;
+        const int maxCritters = 23040;
         const int maxPoints = 1601;
         Vector2[,] bPos = new Vector2[maxCritters, maxPoints];
         float[,] zPos = new float[maxCritters, maxPoints];
         Vector2[,] bVel = new Vector2[maxCritters, maxPoints];
-        Vector3[,] bHSL = new Vector3[maxCritters, maxPoints]; //expressed in HSL, needs to be looked up when newly calculated
+        //Vector3[,] bHSL = new Vector3[maxCritters, maxPoints]; //expressed in HSL, needs to be looked up when newly calculated
         Vector3[,] bColor = new Vector3[maxCritters, maxPoints]; //this is the actual draw color, expressed in RGB
+        int[] currentHue = new int[maxCritters]; //desired hue to reach
+        int[] hueTarget = new int[maxCritters]; //desired hue to reach
+        int[] hueSpeed = new int[maxCritters]; //how fast to go toward this hue
+        int[] hueTimer = new int[maxCritters]; //how fast to go toward this hue
 
         float maxVel = 2f;
         float minVel = 1f;
@@ -53,6 +57,7 @@ namespace SphereDivision
         float lineWidth = 4f;
         bool edgesOn = false;
         int trailLength = 6; //number from 1 to maxpoints, how many trailing points are drawn and tracked
+        int trailSkip = 1;
         public int polygonLength = 4; //for mystify and bowtie drawing styles
 
         Vector3[] lookupHSL = new Vector3[768]; //Hue is looked up, Saturation and Lightness (if <1) are calculated
@@ -65,6 +70,12 @@ namespace SphereDivision
         //2= linear falloff
         //3= Squared Falloff
 
+        //color cycling:
+        //totally random: each critter goes from one random hue to another
+        // Synched Random: each critter is its own different hue and timing
+        // Grayscale: stays on white/back
+        // Rainbow: cycles in order
+
         int rainbowMode = 3;
         int rainbowPosition = 0; //current rainbow color to lookup in hue chart
         int rainbowSpeed = 5; //how fast the colors cycle
@@ -72,9 +83,13 @@ namespace SphereDivision
         float[] brightnessValue = new float[maxCritters];
         float[] brightnessDir = new float[maxCritters];
         float brightnessCycleSpeed = 0.1f;
-        int brightnessCycleNotch = 0; //various preset speeds to select from
         bool brightnessSynch = false; //if true, all brightness is set to the same value all the time
 
+        bool thicknessMode = true;
+        float[,] thicknessValue = new float[maxCritters, maxPoints];
+        float[] thicknessDir = new float[maxCritters];
+        float thicknessCycleSpeed = 01f;
+        bool thicknessSynch = false;
         bool attractorMode = false;
 
         // gravpoints have their own separate physics params and routines
@@ -88,6 +103,8 @@ namespace SphereDivision
         int gravFalloff = 1; //0 = Directional, 1 = 1/dist, 2 = 1/dist^2
         float maxGravSpeed = 0.5f;
         float minGravSpeed = 0.05f;
+
+        float cycleTime = 1000f;
 
         bool SoundReaction = false;
         string soundFile = ""; //sound file to play and react to
@@ -291,18 +308,6 @@ namespace SphereDivision
 
         }
 
-        void advanceTrailingPoints()
-        {
-            //advance each trailing point
-            for (int c = 0; c < maxCritters; c++)
-            {
-                for (int p = trailLength; p > 0; p--)
-                {
-                    bPos[c, p] = bPos[c, p - 1];
-                    bColor[c, p] = bColor[c, p - 1];
-                }
-            }
-        }
 
 
         void LimitVelocity(int critter)
@@ -335,6 +340,26 @@ namespace SphereDivision
             brightnessMode = settingsForm.brightnessMode;
             brightnessCycleSpeed = settingsForm.brightnessCycleSpeed;
             lineWidth = settingsForm.lineWidth;
+            trailSkip = settingsForm.trailSkip;
+            gravMode = settingsForm.gravMode;
+            showGravPoints = settingsForm.showGravPoints;
+            numGravPoints = settingsForm.numGravPoints;
+            gravPointStrength = settingsForm.gravPointStrength;
+            gravFalloff = settingsForm.gravFalloff;
+
+            thicknessMode = settingsForm.thicknessMode;
+            thicknessCycleSpeed = settingsForm.thicknessCycleSpeed;
+            thicknessSynch = settingsForm.thicknessSynch;
+
+            mouseGravStrength = settingsForm.mouseGravStrength;
+            MouseGrav = settingsForm.MouseGrav;
+
+            if (settingsForm.newCycleTime)
+            {
+                settingsForm.newCycleTime = false; //reset each time it's changed
+                cycleTime = (float)settingsForm.cycleTime;
+            }
+
 
             if (settingsForm.restartNow)
             {
@@ -343,6 +368,38 @@ namespace SphereDivision
             }
 
         }
+
+
+        private void makeNewSettings()
+        {
+            if (settingsForm.cycleTime == 0) return; //don't change settings if user hasn't selected either or if timer is set to zero
+
+            //generate random settings or choose a random preset
+            int choice = 0;
+            if (settingsForm.usePresets) choice = 1;
+            if (settingsForm.useRandom) choice += 2;
+
+            switch (choice)
+            {
+                case 0: //no checkboxes selected
+                    if (settingsForm.reExplode) initCritters();
+                    break;
+                case 1: //usepresets only
+                    settingsForm.chooseRandomConfig();
+                    break;
+                case 2: //use random only
+                    settingsForm.createRandomSettings();
+                    break;
+                case 3: //use either/or
+                    if (random.NextDouble() > 0.5) settingsForm.chooseRandomConfig();
+                    else settingsForm.createRandomSettings();
+                    break;
+            }
+            
+
+            cycleTime = (float)settingsForm.cycleTime;
+        }
+
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
@@ -366,6 +423,14 @@ namespace SphereDivision
             settingsForm.showFPS(fpsCount, deltaTime);
 
             if (settingsForm.paused) return;
+
+            cycleTime -= deltaTime;
+            settingsForm.updateClock((int)cycleTime);
+            if (cycleTime <= 0f)
+            {
+                cycleTime = 0f;
+                makeNewSettings();
+            }
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -401,12 +466,12 @@ namespace SphereDivision
                 //Console.WriteLine(lastMousePos.X + "," + lastMousePos.Y);
                 GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Lines);
                 GL.Color3(0.5f, 0.5f, 0.5f);
-                GL.Vertex2(lastMousePos.X - 4, lastMousePos.Y);
-                GL.Vertex2(lastMousePos.X + 4, lastMousePos.Y);
+                GL.Vertex2(lastMousePos.X - 8, lastMousePos.Y);
+                GL.Vertex2(lastMousePos.X + 8, lastMousePos.Y);
                 GL.End();
                 GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Lines);
-                GL.Vertex2(lastMousePos.X, lastMousePos.Y - 4);
-                GL.Vertex2(lastMousePos.X, lastMousePos.Y + 4);
+                GL.Vertex2(lastMousePos.X, lastMousePos.Y - 8);
+                GL.Vertex2(lastMousePos.X, lastMousePos.Y + 8);
                 GL.End();
 
                 for (int c = 0; c < maxCritters; c++)
@@ -561,11 +626,11 @@ namespace SphereDivision
 
                     if (rainbowMode == 3)
                     {
-                        bColor[c, 0] = lookupHSL[rainbowPosition];
+                        bColor[c, 0] = lookupHSL[rainbowPosition] * brightnessValue[c];
                     }
                     else
                     {
-                        bColor[c, 0] = new Vector3(1f, 1f, 1f);
+                        bColor[c, 0] = new Vector3(1f, 1f, 1f) * brightnessValue[c];
                     }
                 }
             }
@@ -579,15 +644,6 @@ namespace SphereDivision
                     {
                         bPos[c, 1] = bPos[c, 0];
                         bPos[c, 0] += bVel[c, 0] * deltaTime;
-
-                        if (rainbowMode == 3)
-                        {
-                            bColor[c, 0] = lookupHSL[rainbowPosition] * brightnessValue[c];
-                        }
-                        else
-                        {
-                            bColor[c, 0] = new Vector3(1f, 1f, 1f) * brightnessValue[c];
-                        }
 
                         //Edge Detection
                         if (bPos[c, 0].X < screenLeft)
@@ -629,15 +685,6 @@ namespace SphereDivision
                         bPos[c, 1] = bPos[c, 0];
                         bPos[c, 0] += bVel[c, 0] * deltaTime;
 
-                        if (rainbowMode == 3)
-                        {
-                            bColor[c, 0] = lookupHSL[rainbowPosition] * brightnessValue[c];
-                        }
-                        else
-                        {
-                            bColor[c, 0] = new Vector3(1f, 1f, 1f) * brightnessValue[c];
-                        }
-
                         //Edge Detection
 
                         if (bPos[c, 0].X < lLeft)
@@ -668,54 +715,243 @@ namespace SphereDivision
                     }
                 }
 
+            }
+
+
+            //deal with colors and hues:
+            if (rainbowMode == 0) //random hues
+            {
+                for (int c = 0; c < maxCritters; c++)
+                {
+                    hueTimer[c] -= 1;
+                    if (hueTimer[c] <= 0)
+                    {
+                        //time to pick a new hue and set up speed/direction
+                        hueTarget[c] = random.Next(0, 768);
+                        int dir;
+                        if (hueTarget[c] > currentHue[c]) dir = 1; else dir = -1;
+                        if (Math.Abs(hueTarget[c] - currentHue[c]) > 384)
+                        {
+                            dir *= -1;
+                        }
+                        hueSpeed[c] = random.Next(1, 100) * dir;
+                        hueTimer[c] = random.Next(1, 10) * 60;
+                    }
+                    if (hueSpeed[c] != 0)
+                    {
+                        currentHue[c] += hueSpeed[c];
+                        if (currentHue[c] < 0) currentHue[c] += 768;
+                        else if (currentHue[c] > 767) currentHue[c] -= 768;
+                        if (Math.Abs(currentHue[c] - hueTarget[c]) <= Math.Abs(hueSpeed[c]))
+                        {
+                            currentHue[c] = hueTarget[c];
+                            hueSpeed[c] = 0;
+                        }
+                    }
+
+                    bColor[c, 0] = lookupHSL[currentHue[c]] * brightnessValue[c];
+                }
 
             }
+            else if (rainbowMode == 1) //synched random hues
+            { //same as above except we only need to do this for a single critter.
+                hueTimer[0] -= 1;
+                if (hueTimer[0] <= 0)
+                {
+                    //time to pick a new hue and set up speed/direction
+                    hueTarget[0] = random.Next(0, 768);
+                    int dir;
+                    if (hueTarget[0] > currentHue[0]) dir = 1; else dir = -1;
+                    if (Math.Abs(hueTarget[0] - currentHue[0]) > 384)
+                    {
+                        dir *= -1;
+                    }
+                    hueSpeed[0] = random.Next(1, 100) * dir;
+                    hueTimer[0] = random.Next(1, 10) * 60;
+                }
+                if (hueSpeed[0] != 0)
+                {
+                    currentHue[0] += hueSpeed[0];
+                    if (currentHue[0] < 0) currentHue[0] += 768;
+                    else if (currentHue[0] > 767) currentHue[0] -= 768;
+                    if (Math.Abs(currentHue[0] - hueTarget[0]) <= Math.Abs(hueSpeed[0]))
+                    {
+                        currentHue[0] = hueTarget[0];
+                        hueSpeed[0] = 0;
+                    }
+                }
+                for (int c = 0; c < maxCritters; c++)
+                {
+                    bColor[c, 0] = lookupHSL[currentHue[0]] * brightnessValue[c];
+                }
+            }
+            else if (rainbowMode == 2) //grayscale
+            {
+                for (int c = 0; c < maxCritters; c++)
+                {
+                    bColor[c, 0] = new Vector3(1f, 1f, 1f) * brightnessValue[c];
+                }
+            }
+            else// (rainbowMode == 3)
+            {
+                for (int c = 0; c < maxCritters; c++)
+                {
+                    bColor[c, 0] = lookupHSL[rainbowPosition] * brightnessValue[c];
+                }
+            }
+
 
             Vector3 rainbowColor;
             rainbowColor = lookupHSL[rainbowPosition];
             rainbowPosition += rainbowSpeed;
             if (rainbowPosition > 767) rainbowPosition = 0;
 
+
             if (brightnessMode)
             {
-                // to cycle brightness values
-                for (int c = 0; c < maxCritters; c++)
+                if (brightnessSynch)
                 {
-                    brightnessValue[c] += brightnessDir[c];
-                    if (brightnessValue[c] > 1f)
+                    brightnessValue[0] += brightnessDir[0];
+                    if (brightnessValue[0] > 1f)
                     {
-                        brightnessValue[c] = 1f - (brightnessValue[c] - 1f);
-                        brightnessDir[c] = -brightnessCycleSpeed;
-                        if (brightnessValue[c] < 0f) brightnessValue[c] = 1f;
+                        brightnessValue[0] = 1f - (brightnessValue[0] - 1f);
+                        brightnessDir[0] = -brightnessCycleSpeed;
+                        if (brightnessValue[0] < 0f) brightnessValue[0] = 1f;
                     }
-                    else if (brightnessValue[c] < 0f)
+                    else if (brightnessValue[0] < 0f)
                     {
-                        brightnessDir[c] = brightnessCycleSpeed;
-                        brightnessValue[c] = -brightnessValue[c];
-                        if (brightnessValue[c] > 1f) brightnessValue[c] = 0f;
+                        brightnessDir[0] = brightnessCycleSpeed;
+                        brightnessValue[0] = -brightnessValue[0];
+                        if (brightnessValue[0] > 1f) brightnessValue[0] = 0f;
+                    }
+                    for (int c = 0; c < numCritters; c++)
+                    {
+                        brightnessValue[c] = brightnessValue[0];
+                    }
+
+                }
+                else
+                {
+                    // to cycle brightness values
+                    for (int c = 0; c < numCritters; c++)
+                    {
+                        //Console.WriteLine(brightnessValue[c].ToString() + " " + brightnessDir[c].ToString());
+                        brightnessValue[c] += brightnessDir[c];
+                        if (brightnessValue[c] > 1f)
+                        {
+                            brightnessValue[c] = 1f - (brightnessValue[c] - 1f);
+                            brightnessDir[c] = -brightnessCycleSpeed;
+                            if (brightnessValue[c] < 0f) brightnessValue[c] = 1f;
+                        }
+                        else if (brightnessValue[c] < 0f)
+                        {
+                            brightnessDir[c] = brightnessCycleSpeed;
+                            brightnessValue[c] = -brightnessValue[c];
+                            if (brightnessValue[c] > 1f) brightnessValue[c] = 0f;
+                        }
                     }
                 }
             }
             else
             {
-                for (int c = 0; c < maxCritters; c++)
+                for (int c = 0; c < numCritters; c++)
                 {
                     brightnessValue[c] = 1f;
                 }
             }
 
+            if (thicknessMode)
+            {
+                if (thicknessSynch)
+                {
+                    thicknessValue[0, 0] += thicknessDir[0];
+                    if (thicknessValue[0, 0] > 10f)
+                    {
+                        thicknessValue[0, 0] = 10f - (thicknessValue[0, 0] - 10f);
+                        thicknessDir[0] = -thicknessCycleSpeed;
+                        if (thicknessValue[0, 0] < 0f) thicknessValue[0, 0] = 10f;
+                    }
+                    else if (thicknessValue[0, 0] < 0f)
+                    {
+                        thicknessDir[0] = thicknessCycleSpeed;
+                        thicknessValue[0, 0] = -thicknessValue[0, 0];
+                        if (thicknessValue[0, 0] > 10f) thicknessValue[0, 0] = 0f;
+                    }
+                    for (int c = 0; c < numCritters; c++)
+                    {
+                        thicknessValue[c, 0] = thicknessValue[0, 0];
+                    }
+
+                }
+                else
+                {
+                    // to cycle thickness values
+                    for (int c = 0; c < numCritters; c++)
+                    {
+                        //Console.WriteLine(thicknessValue[c].ToString() + " " + thicknessDir[c].ToString());
+                        thicknessValue[c, 0] += thicknessDir[c];
+                        if (thicknessValue[c, 0] > 10f)
+                        {
+                            thicknessValue[c, 0] = 10f - (thicknessValue[c, 0] - 10f);
+                            thicknessDir[c] = -thicknessCycleSpeed;
+                            if (thicknessValue[c, 0] < 0f) thicknessValue[c, 0] = 10f;
+                        }
+                        else if (thicknessValue[c, 0] < 0f)
+                        {
+                            thicknessDir[c] = thicknessCycleSpeed;
+                            thicknessValue[c, 0] = -thicknessValue[c, 0];
+                            if (thicknessValue[c, 0] > 10f) thicknessValue[c, 0] = 0f;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int c = 0; c < numCritters; c++)
+                {
+                    thicknessValue[c, 0] = lineWidth;
+                }
+            }
+
+            if (thicknessMode || connectMode > 0)
+            {
+                //advance each trailing point
+                for (int c = 0; c < numCritters; c++)
+                {
+                    for (int p = trailLength; p > 0; p--)
+                    {
+                        bPos[c, p] = bPos[c, p - 1];
+                        bColor[c, p] = bColor[c, p - 1];
+                        thicknessValue[c, p] = thicknessValue[c, p - 1];
+                    }
+                }
+            }
+            else
+            {
+                //advance each trailing point
+                for (int c = 0; c < numCritters; c++)
+                {
+                    for (int p = trailLength; p > 0; p--)
+                    {
+                        bPos[c, p] = bPos[c, p - 1];
+                        bColor[c, p] = bColor[c, p - 1];
+                    }
+                }
+            }
 
             if (connectMode == 0)
             {
-                advanceTrailingPoints();
 
                 // draw each point's position
                 for (int c = 0; c < numCritters; c++)
                 {
-                    GL.LineWidth(lineWidth);
+                    GL.LineWidth(thicknessValue[c, 0]);
                     GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineStrip);
-                    for (int p = 1; p < trailLength; p++)
+                    for (int p = 1; p < trailLength; p += trailSkip)
                     {
+                        //GL.LineWidth(thicknessValue[c, p]);
+                        //for (int x = 1; x < trailLength; x++) { Console.WriteLine(thicknessValue[c, x]); }
+
                         GL.Color3(bColor[c, p]);
                         GL.Vertex2(bPos[c, p]);
                     }
@@ -724,15 +960,15 @@ namespace SphereDivision
             }
             else if (connectMode == 1) //Squares
             {
-                advanceTrailingPoints();
 
                 // draw each point's position
                 for (int c = 0; c < numCritters; c++)
                 {
                     //float sSize = lineWidth * 3f;
-                    GL.LineWidth(lineWidth);
-                    for (int p = 1; p < trailLength; p++)
+
+                    for (int p = 1; p < trailLength; p += trailSkip)
                     {
+                        GL.LineWidth(thicknessValue[c, p]);
                         GL.Color3(bColor[c, p]);
                         GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
                         GL.Vertex2(bPos[c, p].X, bPos[c, p].Y);
@@ -745,19 +981,21 @@ namespace SphereDivision
             }
             else if (connectMode == 2) //Circles
             {
-                advanceTrailingPoints();
 
                 // draw each point's position
                 for (int c = 0; c < numCritters; c++)
                 {
 
-                    GL.LineWidth(lineWidth);
 
-                    for (int p = 1; p < trailLength; p++)
+
+                    for (int p = 1; p < trailLength; p += trailSkip)
                     {
+
                         float sSize = new Vector2(bPos[c, p].X - bPos[c, p - 1].X, bPos[c, p].Y - bPos[c, p - 1].Y).Length / 2f;
+                        GL.LineWidth(thicknessValue[c, p]);
                         GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
                         GL.Color3(bColor[c, p]);
+
                         for (int i = 0; i < circlePoints.Length; i++)
                         {
                             GL.Vertex2(bPos[c, p].X + (circlePoints[i].X * sSize), bPos[c, p].Y + (circlePoints[i].Y * sSize));
@@ -777,7 +1015,6 @@ namespace SphereDivision
                 //    }
                 //}
 
-                advanceTrailingPoints();
                 // draw each point's position
                 int maxUsed = (int)(numCritters / polygonLength) * polygonLength;
                 if (maxUsed == 0)
@@ -789,13 +1026,14 @@ namespace SphereDivision
                 }
                 for (int c = 0; c < maxUsed; c += polygonLength)
                 {
-                    float sSize = lineWidth * 3f;
-                    GL.LineWidth(lineWidth);
 
-                    for (int p = 0; p < trailLength; p++)
-                    {
+
+
+                    for (int p = 0; p < trailLength; p += trailSkip)
+                    {GL.LineWidth(thicknessValue[c, p]);
                         GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
                         GL.Color3(bColor[c, p]);
+                        
                         for (int v = 0; v < polygonLength; v++)
                         {
                             GL.Vertex2(bPos[c + v, p]);
@@ -807,7 +1045,6 @@ namespace SphereDivision
             else if (connectMode == 4) //Solid Mystify (Bowties)
             {
 
-                advanceTrailingPoints();
                 // draw each point's position
                 int maxUsed = (int)(numCritters / polygonLength) * polygonLength;
                 if (maxUsed == 0)
@@ -819,16 +1056,14 @@ namespace SphereDivision
                 }
                 for (int c = 0; c < maxUsed; c += polygonLength)
                 {
-                    float sSize = lineWidth * 3f;
-                    GL.LineWidth(lineWidth);
 
-                    for (int p = 0; p < trailLength; p++)
+                    for (int p = 0; p < trailLength; p += trailSkip)
                     {
                         for (int v = 0; v < polygonLength - 1; v++)
                         {
                             GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
                             GL.Color3(bColor[c, p]);
-
+                            GL.LineWidth(thicknessValue[c, p]);
                             GL.Vertex2(bPos[c + v, p]);
                             GL.Vertex2(bPos[c + v + 1, p]);
                             GL.Vertex2(bPos[c + v + 1, p + 1]);
@@ -838,6 +1073,7 @@ namespace SphereDivision
                         }
                         GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
                         GL.Color3(bColor[c, p]);
+                        GL.LineWidth(thicknessValue[c, p]);
                         GL.Vertex2(bPos[c + polygonLength - 1, p]);
                         GL.Vertex2(bPos[c, p]);
                         GL.Vertex2(bPos[c, p + 1]);
@@ -1165,13 +1401,143 @@ namespace SphereDivision
             float screenTop = -1000f;
             float screenBot = 1000f;
 
+
             Random r = new Random();
+            int thisHue = r.Next(0, 768);
+
+
+            if (r.NextDouble() > 0.8)
+            {//totally random positions and motion:
+                for (int c = 0; c < maxCritters; c++)
+                {
+                    bPos[c, 0].X = screenLeft + ((float)r.NextDouble() * (screenRight - screenLeft));
+                    bPos[c, 0].Y = screenTop + ((float)r.NextDouble() * (screenBot - screenTop));
+                    if (r.NextDouble() > 0.5) bVel[c, 0].X = (float)r.NextDouble() * maxVel;
+                    else bVel[c, 0].X = (float)r.NextDouble() * -maxVel;
+                    if (r.NextDouble() > 0.5) bVel[c, 0].Y = (float)r.NextDouble() * maxVel;
+                    else bVel[c, 0].Y = (float)r.NextDouble() * -maxVel;
+                }
+            }
+            else if (r.NextDouble() > 0.7)
+            { //explode from center
+                for (int c = 0; c < maxCritters; c++)
+                {
+                    bPos[c, 0].X = 0f;
+                    bPos[c, 0].Y = 0f;
+                    double a = r.NextDouble() * 6.28;
+                    float v = (float)r.NextDouble() * maxVel;
+                    bVel[c, 0].X = (float)Math.Sin(a) * v;
+                    bVel[c, 0].Y = (float)Math.Cos(a) * v;
+                }
+            }
+            else if (r.NextDouble() > 0.5)
+            { //explode from a corner
+                switch(r.Next(4))
+                {
+                    case 0: //upper left
+                        for (int c = 0; c < maxCritters; c++)
+                        {
+                            bPos[c, 0].X = screenLeft;
+                            bPos[c, 0].Y = screenTop;
+                            double a = (r.NextDouble() * 1.57) + 1.57;
+                            float v = (float)r.NextDouble() * maxVel;
+                            bVel[c, 0].X = (float)Math.Sin(a) * v;
+                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                        }
+                        break;
+                    case 1: //upper right
+                        for (int c = 0; c < maxCritters; c++)
+                        {
+                            bPos[c, 0].X = screenRight;
+                            bPos[c, 0].Y = screenTop;
+                            double a = (r.NextDouble() * 1.57) -3.14159;
+                            float v = (float)r.NextDouble() * maxVel;
+                            bVel[c, 0].X = (float)Math.Sin(a) * v;
+                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                        }
+                        break;
+                    case 2: //From the right
+                        for (int c = 0; c < maxCritters; c++)
+                        {
+                            bPos[c, 0].X = screenRight;
+                            bPos[c, 0].Y = screenTop + ((float)r.NextDouble() * (screenBot - screenTop));
+                            double a = (r.NextDouble() * 0.2) - 1.67;
+                            float v = (float)r.NextDouble() * maxVel;
+                            bVel[c, 0].X = (float)Math.Sin(a) * v;
+                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                        }
+                        break;
+                    case 3: //lower left
+                        for (int c = 0; c < maxCritters; c++)
+                        {
+                            bPos[c, 0].X = screenLeft;
+                            bPos[c, 0].Y = screenTop + ((float)r.NextDouble() * (screenBot - screenTop));
+                            double a = (r.NextDouble() * 0.2) + 1.47;
+                            float v = (float)r.NextDouble() * maxVel;
+                            bVel[c, 0].X = (float)Math.Sin(a) * v;
+                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                        }
+                        break;
+
+                }
+
+                
+            }
+            else //Rain mode: all start at one edge of the screen going nearly the same direction.
+            {
+                switch (r.Next(4))
+                {
+                    case 0: //Top
+                        for (int c = 0; c < maxCritters; c++)
+                        {
+                            bPos[c, 0].X = screenLeft + ((float)r.NextDouble() * (screenRight - screenLeft));
+                            bPos[c, 0].Y = screenTop;
+                            double a = (r.NextDouble() * 0.3) -0.15;
+                            float v = (float)r.NextDouble() * maxVel;
+                            bVel[c, 0].X = (float)Math.Sin(a) * v;
+                            bVel[c, 0].Y = (float)Math.Cos(a) * v;
+                        }
+                        break;
+                    case 1: //Bottom
+                        for (int c = 0; c < maxCritters; c++)
+                        {
+                            bPos[c, 0].X = screenLeft + ((float)r.NextDouble() * (screenRight - screenLeft));
+                            bPos[c, 0].Y = screenBot;
+                            double a = (r.NextDouble() * 0.3) - 0.15;
+                            float v = (float)r.NextDouble() * maxVel;
+                            bVel[c, 0].X = (float)Math.Sin(a) * v;
+                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                        }
+                        break;
+                    case 2: //right
+                        for (int c = 0; c < maxCritters; c++)
+                        {
+                            bPos[c, 0].X = screenRight;
+                            bPos[c, 0].Y = screenBot;
+                            double a = (r.NextDouble() * 1.57) - 1.57;
+                            float v = (float)r.NextDouble() * maxVel;
+                            bVel[c, 0].X = (float)Math.Sin(a) * v;
+                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                        }
+                        break;
+                    case 3: //lower left
+                        for (int c = 0; c < maxCritters; c++)
+                        {
+                            bPos[c, 0].X = screenLeft;
+                            bPos[c, 0].Y = screenBot;
+                            double a = (r.NextDouble() * 1.57);
+                            float v = (float)r.NextDouble() * maxVel;
+                            bVel[c, 0].X = (float)Math.Sin(a) * v;
+                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                        }
+                        break;
+
+                }
+            }
+
             for (int c = 0; c < maxCritters; c++)
             {
-                bPos[c, 0].X = screenLeft + ((float)r.NextDouble() * (screenRight - screenLeft));
-                bPos[c, 0].Y = screenTop + ((float)r.NextDouble() * (screenBot - screenTop));
-                bVel[c, 0].X = (float)r.NextDouble() * maxVel;
-                bVel[c, 0].Y = (float)r.NextDouble() * maxVel;
+
                 zPos[c, 0] = ((float)r.NextDouble() * 10f) - 5f;
                 for (int p = 0; p < maxPoints; p++)
                 {
@@ -1184,39 +1550,63 @@ namespace SphereDivision
                 if (brightnessSynch)
                 {
                     brightnessValue[c] = 0f;
-                    brightnessDir[c] = 0.1f;
+                    brightnessDir[c] = brightnessCycleSpeed;
                 }
                 else
                 {
                     brightnessValue[c] = (float)r.NextDouble();
-                    brightnessDir[c] = 0.1f;
+                    brightnessDir[c] = brightnessCycleSpeed;
                 }
-            }
 
-            //also initialize the grav points here
-            for (int g = 0; g < maxGravPoints; g++)
-            {
-                gPos[g].X = screenLeft + ((float)r.NextDouble() * (screenRight - screenLeft));
-                gPos[g].Y = screenTop + ((float)r.NextDouble() * (screenBot - screenTop));
-                gVel[g].X = (float)r.NextDouble() * maxGravSpeed;
-                gVel[g].Y = (float)r.NextDouble() * maxGravSpeed;
-            }
+                if (thicknessSynch)
+                {
+                    thicknessValue[c, 1] = 1f;
+                    thicknessDir[c] = thicknessCycleSpeed;
+                }
+                else
+                {
+                    thicknessValue[c, 1] = r.Next(1, 10);
+                    thicknessDir[c] = thicknessCycleSpeed;
+                }
 
+                if (rainbowMode == 0)
+                {
+                    currentHue[c] = r.Next(0, 768);
+                    hueTarget[c] = currentHue[c];
+                    hueSpeed[c] = 1;
+                }
+                else if (rainbowMode == 1)
+                {
+                    currentHue[c] = thisHue;
+                    hueTarget[c] = currentHue[c];
+                    hueSpeed[c] = 0;
+                }
+
+                //also initialize the grav points here
+                for (int g = 0; g < maxGravPoints; g++)
+                {
+                    gPos[g].X = screenLeft + ((float)r.NextDouble() * (screenRight - screenLeft));
+                    gPos[g].Y = screenTop + ((float)r.NextDouble() * (screenBot - screenTop));
+                    gVel[g].X = (float)r.NextDouble() * maxGravSpeed;
+                    gVel[g].Y = (float)r.NextDouble() * maxGravSpeed;
+                }
+
+
+
+
+            }
 
             tickCount = 0;
             curTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
             lastTime = curTime;
 
+
+
+
+
+
+
+
         }
-
-
-
-
-
-
-
-
-
-
     }
 }

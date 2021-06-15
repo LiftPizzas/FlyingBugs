@@ -30,14 +30,17 @@ namespace SphereDivision
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.labelnumCritters = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.trackBar8 = new System.Windows.Forms.TrackBar();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox25 = new System.Windows.Forms.GroupBox();
+            this.checkBox8 = new System.Windows.Forms.CheckBox();
+            this.checkBox9 = new System.Windows.Forms.CheckBox();
+            this.groupBox26 = new System.Windows.Forms.GroupBox();
+            this.trackBar9 = new System.Windows.Forms.TrackBar();
+            this.groupBox24 = new System.Windows.Forms.GroupBox();
+            this.trackBar7 = new System.Windows.Forms.TrackBar();
             this.groupBox19 = new System.Windows.Forms.GroupBox();
             this.trackBar6 = new System.Windows.Forms.TrackBar();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
@@ -58,6 +61,7 @@ namespace SphereDivision
             this.trackBarPolygonLength = new System.Windows.Forms.TrackBar();
             this.listBoxDrawingStyle = new System.Windows.Forms.ListBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.listBox3 = new System.Windows.Forms.ListBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
@@ -71,16 +75,34 @@ namespace SphereDivision
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.listBox5 = new System.Windows.Forms.ListBox();
             this.groupBox18 = new System.Windows.Forms.GroupBox();
+            this.button8 = new System.Windows.Forms.Button();
             this.groupBox20 = new System.Windows.Forms.GroupBox();
+            this.button7 = new System.Windows.Forms.Button();
             this.listBox6 = new System.Windows.Forms.ListBox();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.labelFPS = new System.Windows.Forms.Label();
             this.labelMS = new System.Windows.Forms.Label();
-            this.button7 = new System.Windows.Forms.Button();
+            this.groupBox22 = new System.Windows.Forms.GroupBox();
+            this.groupBox23 = new System.Windows.Forms.GroupBox();
+            this.trackBar2 = new System.Windows.Forms.TrackBar();
+            this.checkBox6 = new System.Windows.Forms.CheckBox();
+            this.checkBox5 = new System.Windows.Forms.CheckBox();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.checkBox10 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar8)).BeginInit();
             this.groupBox3.SuspendLayout();
+            this.groupBox25.SuspendLayout();
+            this.groupBox26.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar9)).BeginInit();
+            this.groupBox24.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar7)).BeginInit();
             this.groupBox19.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar6)).BeginInit();
             this.groupBox12.SuspendLayout();
@@ -104,91 +126,60 @@ namespace SphereDivision
             this.groupBox16.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar5)).BeginInit();
             this.groupBox17.SuspendLayout();
+            this.groupBox18.SuspendLayout();
             this.groupBox20.SuspendLayout();
+            this.groupBox22.SuspendLayout();
+            this.groupBox23.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.labelnumCritters);
-            this.groupBox1.Controls.Add(this.button2);
-            this.groupBox1.Controls.Add(this.button1);
+            this.groupBox1.Controls.Add(this.trackBar1);
             this.groupBox1.Location = new System.Drawing.Point(6, 19);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(138, 47);
+            this.groupBox1.Size = new System.Drawing.Size(138, 57);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "# of Critters";
+            this.groupBox1.Text = "4 Critters";
             // 
-            // labelnumCritters
+            // trackBar1
             // 
-            this.labelnumCritters.AutoSize = true;
-            this.labelnumCritters.Location = new System.Drawing.Point(95, 24);
-            this.labelnumCritters.Name = "labelnumCritters";
-            this.labelnumCritters.Size = new System.Drawing.Size(13, 13);
-            this.labelnumCritters.TabIndex = 1;
-            this.labelnumCritters.Text = "4";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(51, 20);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(38, 21);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "+";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(7, 20);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(38, 21);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "-";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.trackBar1.Location = new System.Drawing.Point(6, 19);
+            this.trackBar1.Maximum = 90;
+            this.trackBar1.Minimum = 1;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(130, 45);
+            this.trackBar1.TabIndex = 5;
+            this.trackBar1.TickFrequency = 5;
+            this.trackBar1.Value = 2;
+            this.trackBar1.ValueChanged += new System.EventHandler(this.changeCritters);
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.button3);
-            this.groupBox2.Controls.Add(this.button4);
-            this.groupBox2.Location = new System.Drawing.Point(6, 19);
+            this.groupBox2.Controls.Add(this.trackBar8);
+            this.groupBox2.Location = new System.Drawing.Point(6, 43);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(138, 47);
+            this.groupBox2.Size = new System.Drawing.Size(182, 52);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "# of Auto Grav Points";
+            this.groupBox2.Text = "4 Auto Grav Points";
             // 
-            // label2
+            // trackBar8
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(95, 24);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(13, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "4";
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(51, 20);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(38, 21);
-            this.button3.TabIndex = 1;
-            this.button3.Text = "+";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(7, 20);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(38, 21);
-            this.button4.TabIndex = 0;
-            this.button4.Text = "-";
-            this.button4.UseVisualStyleBackColor = true;
+            this.trackBar8.Location = new System.Drawing.Point(4, 19);
+            this.trackBar8.Maximum = 16;
+            this.trackBar8.Minimum = 1;
+            this.trackBar8.Name = "trackBar8";
+            this.trackBar8.Size = new System.Drawing.Size(172, 45);
+            this.trackBar8.TabIndex = 6;
+            this.trackBar8.Value = 4;
+            this.trackBar8.ValueChanged += new System.EventHandler(this.changeGravPoints);
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.groupBox25);
+            this.groupBox3.Controls.Add(this.groupBox24);
             this.groupBox3.Controls.Add(this.groupBox19);
             this.groupBox3.Controls.Add(this.groupBox12);
             this.groupBox3.Controls.Add(this.groupBox8);
@@ -198,15 +189,95 @@ namespace SphereDivision
             this.groupBox3.Controls.Add(this.groupBox1);
             this.groupBox3.Location = new System.Drawing.Point(12, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(322, 562);
+            this.groupBox3.Size = new System.Drawing.Size(322, 755);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Critters";
             // 
+            // groupBox25
+            // 
+            this.groupBox25.Controls.Add(this.checkBox8);
+            this.groupBox25.Controls.Add(this.checkBox9);
+            this.groupBox25.Controls.Add(this.groupBox26);
+            this.groupBox25.Location = new System.Drawing.Point(8, 564);
+            this.groupBox25.Name = "groupBox25";
+            this.groupBox25.Size = new System.Drawing.Size(309, 104);
+            this.groupBox25.TabIndex = 7;
+            this.groupBox25.TabStop = false;
+            this.groupBox25.Text = "Thickness Cycling";
+            // 
+            // checkBox8
+            // 
+            this.checkBox8.AutoSize = true;
+            this.checkBox8.Location = new System.Drawing.Point(143, 20);
+            this.checkBox8.Name = "checkBox8";
+            this.checkBox8.Size = new System.Drawing.Size(108, 17);
+            this.checkBox8.TabIndex = 5;
+            this.checkBox8.Text = "Synch Thickness";
+            this.checkBox8.UseVisualStyleBackColor = true;
+            this.checkBox8.CheckedChanged += new System.EventHandler(this.checkBox8_CheckedChanged);
+            // 
+            // checkBox9
+            // 
+            this.checkBox9.AutoSize = true;
+            this.checkBox9.Checked = true;
+            this.checkBox9.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox9.Location = new System.Drawing.Point(13, 19);
+            this.checkBox9.Name = "checkBox9";
+            this.checkBox9.Size = new System.Drawing.Size(65, 17);
+            this.checkBox9.TabIndex = 4;
+            this.checkBox9.Text = "Enabled";
+            this.checkBox9.UseVisualStyleBackColor = true;
+            this.checkBox9.CheckedChanged += new System.EventHandler(this.checkBox9_CheckedChanged);
+            // 
+            // groupBox26
+            // 
+            this.groupBox26.Controls.Add(this.trackBar9);
+            this.groupBox26.Location = new System.Drawing.Point(6, 42);
+            this.groupBox26.Name = "groupBox26";
+            this.groupBox26.Size = new System.Drawing.Size(297, 49);
+            this.groupBox26.TabIndex = 3;
+            this.groupBox26.TabStop = false;
+            this.groupBox26.Text = "Speed";
+            // 
+            // trackBar9
+            // 
+            this.trackBar9.Location = new System.Drawing.Point(6, 19);
+            this.trackBar9.Maximum = 100;
+            this.trackBar9.Minimum = 1;
+            this.trackBar9.Name = "trackBar9";
+            this.trackBar9.Size = new System.Drawing.Size(278, 45);
+            this.trackBar9.TabIndex = 5;
+            this.trackBar9.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar9.Value = 20;
+            this.trackBar9.ValueChanged += new System.EventHandler(this.changeThicknessSpeed);
+            // 
+            // groupBox24
+            // 
+            this.groupBox24.Controls.Add(this.trackBar7);
+            this.groupBox24.Location = new System.Drawing.Point(6, 216);
+            this.groupBox24.Name = "groupBox24";
+            this.groupBox24.Size = new System.Drawing.Size(309, 71);
+            this.groupBox24.TabIndex = 6;
+            this.groupBox24.TabStop = false;
+            this.groupBox24.Text = "Trail Skip";
+            // 
+            // trackBar7
+            // 
+            this.trackBar7.Location = new System.Drawing.Point(6, 19);
+            this.trackBar7.Maximum = 100;
+            this.trackBar7.Minimum = 1;
+            this.trackBar7.Name = "trackBar7";
+            this.trackBar7.Size = new System.Drawing.Size(284, 45);
+            this.trackBar7.TabIndex = 4;
+            this.trackBar7.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar7.Value = 1;
+            this.trackBar7.ValueChanged += new System.EventHandler(this.changeTrailSkip);
+            // 
             // groupBox19
             // 
             this.groupBox19.Controls.Add(this.trackBar6);
-            this.groupBox19.Location = new System.Drawing.Point(7, 493);
+            this.groupBox19.Location = new System.Drawing.Point(8, 674);
             this.groupBox19.Name = "groupBox19";
             this.groupBox19.Size = new System.Drawing.Size(309, 71);
             this.groupBox19.TabIndex = 5;
@@ -222,14 +293,14 @@ namespace SphereDivision
             this.trackBar6.Size = new System.Drawing.Size(284, 45);
             this.trackBar6.TabIndex = 4;
             this.trackBar6.Value = 4;
-            this.trackBar6.Scroll += new System.EventHandler(this.trackBar6_Scroll);
+            this.trackBar6.ValueChanged += new System.EventHandler(this.changeLineThickness);
             // 
             // groupBox12
             // 
             this.groupBox12.Controls.Add(this.checkBox4);
             this.groupBox12.Controls.Add(this.checkBox3);
             this.groupBox12.Controls.Add(this.groupBox13);
-            this.groupBox12.Location = new System.Drawing.Point(7, 381);
+            this.groupBox12.Location = new System.Drawing.Point(8, 454);
             this.groupBox12.Name = "groupBox12";
             this.groupBox12.Size = new System.Drawing.Size(309, 104);
             this.groupBox12.TabIndex = 4;
@@ -273,13 +344,13 @@ namespace SphereDivision
             // trackBar4
             // 
             this.trackBar4.Location = new System.Drawing.Point(6, 19);
-            this.trackBar4.Maximum = 100;
             this.trackBar4.Minimum = 1;
             this.trackBar4.Name = "trackBar4";
             this.trackBar4.Size = new System.Drawing.Size(278, 45);
             this.trackBar4.TabIndex = 5;
-            this.trackBar4.Value = 20;
-            this.trackBar4.Scroll += new System.EventHandler(this.trackBar4_Scroll);
+            this.trackBar4.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar4.Value = 10;
+            this.trackBar4.ValueChanged += new System.EventHandler(this.changeBrightnessSpeed);
             // 
             // groupBox8
             // 
@@ -294,19 +365,21 @@ namespace SphereDivision
             // trackBarTrailLength
             // 
             this.trackBarTrailLength.Location = new System.Drawing.Point(6, 19);
-            this.trackBarTrailLength.Maximum = 100;
+            this.trackBarTrailLength.Maximum = 130;
             this.trackBarTrailLength.Minimum = 2;
             this.trackBarTrailLength.Name = "trackBarTrailLength";
             this.trackBarTrailLength.Size = new System.Drawing.Size(284, 45);
             this.trackBarTrailLength.TabIndex = 4;
+            this.trackBarTrailLength.TickFrequency = 5;
+            this.trackBarTrailLength.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarTrailLength.Value = 6;
-            this.trackBarTrailLength.Scroll += new System.EventHandler(this.trackBarTrailLength_Scroll);
+            this.trackBarTrailLength.ValueChanged += new System.EventHandler(this.changeTrailLength);
             // 
             // groupBox6
             // 
             this.groupBox6.Controls.Add(this.groupBox7);
             this.groupBox6.Controls.Add(this.listBox2);
-            this.groupBox6.Location = new System.Drawing.Point(7, 216);
+            this.groupBox6.Location = new System.Drawing.Point(8, 293);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(308, 150);
             this.groupBox6.TabIndex = 3;
@@ -330,16 +403,17 @@ namespace SphereDivision
             this.trackBarRainbowSpeed.Name = "trackBarRainbowSpeed";
             this.trackBarRainbowSpeed.Size = new System.Drawing.Size(276, 45);
             this.trackBarRainbowSpeed.TabIndex = 5;
+            this.trackBarRainbowSpeed.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarRainbowSpeed.Value = 5;
-            this.trackBarRainbowSpeed.Scroll += new System.EventHandler(this.trackBarRainbowSpeed_Scroll);
+            this.trackBarRainbowSpeed.ValueChanged += new System.EventHandler(this.changeRainbowSpeed);
             // 
             // listBox2
             // 
             this.listBox2.FormattingEnabled = true;
             this.listBox2.Items.AddRange(new object[] {
-            "Totally Random",
-            "Static Monochrome",
-            "Sequenced Monochrome",
+            "Random Colors",
+            "Synched Random",
+            "Grayscale",
             "Rainbow Mode"});
             this.listBox2.Location = new System.Drawing.Point(7, 20);
             this.listBox2.Name = "listBox2";
@@ -399,7 +473,7 @@ namespace SphereDivision
             this.trackBarPolygonLength.Size = new System.Drawing.Size(117, 45);
             this.trackBarPolygonLength.TabIndex = 4;
             this.trackBarPolygonLength.Value = 2;
-            this.trackBarPolygonLength.Scroll += new System.EventHandler(this.trackBarPolygonLength_Scroll);
+            this.trackBarPolygonLength.ValueChanged += new System.EventHandler(this.changePolygonLength);
             // 
             // listBoxDrawingStyle
             // 
@@ -418,23 +492,35 @@ namespace SphereDivision
             // 
             // groupBox9
             // 
+            this.groupBox9.Controls.Add(this.checkBox7);
             this.groupBox9.Controls.Add(this.groupBox11);
             this.groupBox9.Controls.Add(this.checkBox2);
             this.groupBox9.Controls.Add(this.groupBox10);
             this.groupBox9.Controls.Add(this.groupBox2);
             this.groupBox9.Location = new System.Drawing.Point(343, 127);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(200, 272);
+            this.groupBox9.Size = new System.Drawing.Size(200, 267);
             this.groupBox9.TabIndex = 4;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Gravity Points";
             // 
+            // checkBox7
+            // 
+            this.checkBox7.AutoSize = true;
+            this.checkBox7.Location = new System.Drawing.Point(13, 19);
+            this.checkBox7.Name = "checkBox7";
+            this.checkBox7.Size = new System.Drawing.Size(65, 17);
+            this.checkBox7.TabIndex = 6;
+            this.checkBox7.Text = "Enabled";
+            this.checkBox7.UseVisualStyleBackColor = true;
+            this.checkBox7.CheckedChanged += new System.EventHandler(this.checkBox7_CheckedChanged);
+            // 
             // groupBox11
             // 
             this.groupBox11.Controls.Add(this.listBox3);
-            this.groupBox11.Location = new System.Drawing.Point(13, 174);
+            this.groupBox11.Location = new System.Drawing.Point(6, 171);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(157, 87);
+            this.groupBox11.Size = new System.Drawing.Size(182, 87);
             this.groupBox11.TabIndex = 5;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Strength Falloff";
@@ -445,26 +531,28 @@ namespace SphereDivision
             this.listBox3.Items.AddRange(new object[] {
             "None",
             "Distance",
-            "Dist Sqrd"});
+            "Dist Squared"});
             this.listBox3.Location = new System.Drawing.Point(7, 19);
             this.listBox3.Name = "listBox3";
             this.listBox3.Size = new System.Drawing.Size(120, 56);
             this.listBox3.TabIndex = 0;
+            this.listBox3.SelectedIndexChanged += new System.EventHandler(this.listBox3_SelectedIndexChanged);
             // 
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(13, 72);
+            this.checkBox2.Location = new System.Drawing.Point(114, 19);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(56, 17);
             this.checkBox2.TabIndex = 0;
             this.checkBox2.Text = "Visible";
             this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // groupBox10
             // 
             this.groupBox10.Controls.Add(this.trackBar3);
-            this.groupBox10.Location = new System.Drawing.Point(13, 104);
+            this.groupBox10.Location = new System.Drawing.Point(7, 101);
             this.groupBox10.Name = "groupBox10";
             this.groupBox10.Size = new System.Drawing.Size(181, 56);
             this.groupBox10.TabIndex = 2;
@@ -475,15 +563,19 @@ namespace SphereDivision
             // 
             this.trackBar3.Location = new System.Drawing.Point(6, 19);
             this.trackBar3.Maximum = 100;
+            this.trackBar3.Minimum = 1;
             this.trackBar3.Name = "trackBar3";
             this.trackBar3.Size = new System.Drawing.Size(169, 45);
             this.trackBar3.TabIndex = 6;
+            this.trackBar3.TickFrequency = 5;
+            this.trackBar3.Value = 1;
+            this.trackBar3.ValueChanged += new System.EventHandler(this.changeGravStrength);
             // 
             // groupBox14
             // 
             this.groupBox14.Controls.Add(this.groupBox15);
             this.groupBox14.Controls.Add(this.groupBox16);
-            this.groupBox14.Location = new System.Drawing.Point(343, 405);
+            this.groupBox14.Location = new System.Drawing.Point(343, 466);
             this.groupBox14.Name = "groupBox14";
             this.groupBox14.Size = new System.Drawing.Size(200, 169);
             this.groupBox14.TabIndex = 5;
@@ -512,6 +604,7 @@ namespace SphereDivision
             this.listBox4.Name = "listBox4";
             this.listBox4.Size = new System.Drawing.Size(120, 56);
             this.listBox4.TabIndex = 0;
+            this.listBox4.SelectedIndexChanged += new System.EventHandler(this.listBox4_SelectedIndexChanged);
             // 
             // groupBox16
             // 
@@ -530,6 +623,8 @@ namespace SphereDivision
             this.trackBar5.Name = "trackBar5";
             this.trackBar5.Size = new System.Drawing.Size(169, 45);
             this.trackBar5.TabIndex = 6;
+            this.trackBar5.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar5.ValueChanged += new System.EventHandler(this.changeMouseGrav);
             // 
             // groupBox17
             // 
@@ -554,12 +649,23 @@ namespace SphereDivision
             // 
             // groupBox18
             // 
-            this.groupBox18.Location = new System.Drawing.Point(549, 135);
+            this.groupBox18.Controls.Add(this.button8);
+            this.groupBox18.Location = new System.Drawing.Point(767, 21);
             this.groupBox18.Name = "groupBox18";
             this.groupBox18.Size = new System.Drawing.Size(200, 100);
             this.groupBox18.TabIndex = 7;
             this.groupBox18.TabStop = false;
             this.groupBox18.Text = "Sound Reactivity";
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(56, 38);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(89, 25);
+            this.button8.TabIndex = 11;
+            this.button8.Text = "Test";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // groupBox20
             // 
@@ -572,6 +678,16 @@ namespace SphereDivision
             this.groupBox20.TabStop = false;
             this.groupBox20.Text = "Presets";
             // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(10, 273);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(177, 25);
+            this.button7.TabIndex = 11;
+            this.button7.Text = "Save";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
             // listBox6
             // 
             this.listBox6.FormattingEnabled = true;
@@ -581,6 +697,7 @@ namespace SphereDivision
             this.listBox6.Name = "listBox6";
             this.listBox6.Size = new System.Drawing.Size(177, 251);
             this.listBox6.TabIndex = 0;
+            this.listBox6.SelectedIndexChanged += new System.EventHandler(this.listBox6_SelectedIndexChanged);
             // 
             // button5
             // 
@@ -614,26 +731,115 @@ namespace SphereDivision
             // labelMS
             // 
             this.labelMS.AutoSize = true;
-            this.labelMS.Location = new System.Drawing.Point(353, 79);
+            this.labelMS.Location = new System.Drawing.Point(445, 59);
             this.labelMS.Name = "labelMS";
             this.labelMS.Size = new System.Drawing.Size(29, 13);
             this.labelMS.TabIndex = 12;
             this.labelMS.Text = "0 ms";
             // 
-            // button7
+            // groupBox22
             // 
-            this.button7.Location = new System.Drawing.Point(10, 273);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(177, 25);
-            this.button7.TabIndex = 11;
-            this.button7.Text = "Save";
-            this.button7.UseVisualStyleBackColor = true;
+            this.groupBox22.Controls.Add(this.checkBox10);
+            this.groupBox22.Controls.Add(this.groupBox23);
+            this.groupBox22.Controls.Add(this.checkBox6);
+            this.groupBox22.Controls.Add(this.checkBox5);
+            this.groupBox22.Location = new System.Drawing.Point(559, 118);
+            this.groupBox22.Name = "groupBox22";
+            this.groupBox22.Size = new System.Drawing.Size(190, 132);
+            this.groupBox22.TabIndex = 13;
+            this.groupBox22.TabStop = false;
+            this.groupBox22.Text = "Auto-Settings";
+            // 
+            // groupBox23
+            // 
+            this.groupBox23.Controls.Add(this.trackBar2);
+            this.groupBox23.Location = new System.Drawing.Point(7, 67);
+            this.groupBox23.Name = "groupBox23";
+            this.groupBox23.Size = new System.Drawing.Size(170, 59);
+            this.groupBox23.TabIndex = 7;
+            this.groupBox23.TabStop = false;
+            this.groupBox23.Text = "Cycle Time (30 sec)";
+            // 
+            // trackBar2
+            // 
+            this.trackBar2.Location = new System.Drawing.Point(6, 19);
+            this.trackBar2.Maximum = 120;
+            this.trackBar2.Name = "trackBar2";
+            this.trackBar2.Size = new System.Drawing.Size(158, 45);
+            this.trackBar2.TabIndex = 4;
+            this.trackBar2.TickFrequency = 5;
+            this.trackBar2.Value = 6;
+            this.trackBar2.ValueChanged += new System.EventHandler(this.changeCycleTime);
+            // 
+            // checkBox6
+            // 
+            this.checkBox6.AutoSize = true;
+            this.checkBox6.Checked = true;
+            this.checkBox6.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox6.Location = new System.Drawing.Point(7, 44);
+            this.checkBox6.Name = "checkBox6";
+            this.checkBox6.Size = new System.Drawing.Size(88, 17);
+            this.checkBox6.TabIndex = 1;
+            this.checkBox6.Text = "Use Random";
+            this.checkBox6.UseVisualStyleBackColor = true;
+            this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBox6_CheckedChanged);
+            // 
+            // checkBox5
+            // 
+            this.checkBox5.AutoSize = true;
+            this.checkBox5.Checked = true;
+            this.checkBox5.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox5.Location = new System.Drawing.Point(7, 20);
+            this.checkBox5.Name = "checkBox5";
+            this.checkBox5.Size = new System.Drawing.Size(83, 17);
+            this.checkBox5.TabIndex = 0;
+            this.checkBox5.Text = "Use Presets";
+            this.checkBox5.UseVisualStyleBackColor = true;
+            this.checkBox5.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(353, 82);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(40, 13);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Next in";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(353, 99);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(47, 13);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "Random";
+            // 
+            // checkBox10
+            // 
+            this.checkBox10.AutoSize = true;
+            this.checkBox10.Checked = true;
+            this.checkBox10.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox10.Location = new System.Drawing.Point(113, 20);
+            this.checkBox10.Name = "checkBox10";
+            this.checkBox10.Size = new System.Drawing.Size(64, 17);
+            this.checkBox10.TabIndex = 8;
+            this.checkBox10.Text = "Explode";
+            this.checkBox10.UseVisualStyleBackColor = true;
+            this.checkBox10.CheckedChanged += new System.EventHandler(this.checkBox10_CheckedChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 586);
+            this.ClientSize = new System.Drawing.Size(975, 770);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.groupBox22);
             this.Controls.Add(this.labelMS);
             this.Controls.Add(this.labelFPS);
             this.Controls.Add(this.button6);
@@ -653,9 +859,19 @@ namespace SphereDivision
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar8)).EndInit();
             this.groupBox3.ResumeLayout(false);
+            this.groupBox25.ResumeLayout(false);
+            this.groupBox25.PerformLayout();
+            this.groupBox26.ResumeLayout(false);
+            this.groupBox26.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar9)).EndInit();
+            this.groupBox24.ResumeLayout(false);
+            this.groupBox24.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar7)).EndInit();
             this.groupBox19.ResumeLayout(false);
             this.groupBox19.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar6)).EndInit();
@@ -689,7 +905,13 @@ namespace SphereDivision
             this.groupBox16.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar5)).EndInit();
             this.groupBox17.ResumeLayout(false);
+            this.groupBox18.ResumeLayout(false);
             this.groupBox20.ResumeLayout(false);
+            this.groupBox22.ResumeLayout(false);
+            this.groupBox22.PerformLayout();
+            this.groupBox23.ResumeLayout(false);
+            this.groupBox23.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -698,13 +920,7 @@ namespace SphereDivision
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label labelnumCritters;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.TrackBar trackBarTrailLength;
@@ -746,5 +962,26 @@ namespace SphereDivision
         private System.Windows.Forms.Label labelFPS;
         private System.Windows.Forms.Label labelMS;
         private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.GroupBox groupBox22;
+        private System.Windows.Forms.GroupBox groupBox23;
+        private System.Windows.Forms.TrackBar trackBar2;
+        private System.Windows.Forms.CheckBox checkBox6;
+        private System.Windows.Forms.CheckBox checkBox5;
+        private System.Windows.Forms.GroupBox groupBox24;
+        private System.Windows.Forms.TrackBar trackBar7;
+        private System.Windows.Forms.TrackBar trackBar8;
+        private System.Windows.Forms.CheckBox checkBox7;
+        private System.Windows.Forms.GroupBox groupBox25;
+        private System.Windows.Forms.CheckBox checkBox8;
+        private System.Windows.Forms.CheckBox checkBox9;
+        private System.Windows.Forms.GroupBox groupBox26;
+        private System.Windows.Forms.TrackBar trackBar9;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox checkBox10;
     }
 }
