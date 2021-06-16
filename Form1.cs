@@ -670,5 +670,11 @@ namespace SphereDivision
         {
             System.Diagnostics.Process.Start("http://www.youtube.com/channel/UCoK_3oUq4PWcMrxpUqHQrGw" as string);
         }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/LiftPizzas/FlyingBugs" as string);
+        
+        }
     }
 }
