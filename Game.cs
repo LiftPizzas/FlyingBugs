@@ -6,9 +6,12 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System.Windows.Forms;
 using System.IO;
-using SharpDX.XAudio2;
-using SharpDX.Multimedia;
-using SharpDX.IO;
+//using SharpDX.XAudio2;
+//using SharpDX.Multimedia;
+//using SharpDX.IO;
+//to be added through nuget:
+//SharpDX 4.2.0 (Alexandre Mutel)
+//SharpDX.Xaudio2 4.2.0(Alexandre Mutel)
 
 namespace SphereDivision
 {
@@ -31,11 +34,12 @@ namespace SphereDivision
         // each point has a position and velocity
 
         int numCritters = 4;
-        const int maxCritters = 23040;
+        const int maxCritters = 23200;
         const int maxPoints = 1601;
         Vector2[,] bPos = new Vector2[maxCritters, maxPoints];
         float[,] zPos = new float[maxCritters, maxPoints];
-        Vector2[,] bVel = new Vector2[maxCritters, maxPoints];
+        Vector2[] bVel = new Vector2[maxCritters];
+        float[,] circleSize = new float[maxCritters, maxPoints]; //only for drawing circles, tracks size to avoid later recalculation
         //Vector3[,] bHSL = new Vector3[maxCritters, maxPoints]; //expressed in HSL, needs to be looked up when newly calculated
         Vector3[,] bColor = new Vector3[maxCritters, maxPoints]; //this is the actual draw color, expressed in RGB
         int[] currentHue = new int[maxCritters]; //desired hue to reach
@@ -59,6 +63,12 @@ namespace SphereDivision
         int trailLength = 6; //number from 1 to maxpoints, how many trailing points are drawn and tracked
         int trailSkip = 1;
         public int polygonLength = 4; //for mystify and bowtie drawing styles
+
+        //for tracking trail positions, instead of copying the entire trail each frame
+        //we just move a pointer along.
+        int trailStart = 1;
+        int trailEnd = 2;
+        int trailPrev = 0;
 
         Vector3[] lookupHSL = new Vector3[768]; //Hue is looked up, Saturation and Lightness (if <1) are calculated
         // gives full saturation of indexed hue 0-767
@@ -162,11 +172,11 @@ namespace SphereDivision
 
 
         //sound stuff
-        XAudio2 xaudio;
-        WaveFormat waveFormat;
-        AudioBuffer buffer;
-        SoundStream soundstream;
-        SourceVoice[] sourceVoice;
+        //        XAudio2 xaudio;
+        //        WaveFormat waveFormat;
+        //        AudioBuffer buffer;
+        //        SoundStream soundstream;
+        //        SourceVoice[] sourceVoice;
         int soundOn = 0;
         int currentVoice = 0;
         int voiceLoop = 0;
@@ -312,16 +322,16 @@ namespace SphereDivision
 
         void LimitVelocity(int critter)
         {
-            float vel = (float)Math.Sqrt((bVel[critter, 0].X * bVel[critter, 0].X) + (bVel[critter, 0].Y + bVel[critter, 0].Y));
+            float vel = (float)Math.Sqrt((bVel[critter].X * bVel[critter].X) + (bVel[critter].Y + bVel[critter].Y));
             if (vel > maxVel)
             {
-                bVel[critter, 0].X = (bVel[critter, 0].X / vel) * maxVel;
-                bVel[critter, 0].Y = (bVel[critter, 0].Y / vel) * maxVel;
+                bVel[critter].X = (bVel[critter].X / vel) * maxVel;
+                bVel[critter].Y = (bVel[critter].Y / vel) * maxVel;
             }
             if (vel < minVel)
             {
-                bVel[critter, 0].X = (bVel[critter, 0].X / vel) * minVel;
-                bVel[critter, 0].Y = (bVel[critter, 0].Y / vel) * minVel;
+                bVel[critter].X = (bVel[critter].X / vel) * minVel;
+                bVel[critter].Y = (bVel[critter].Y / vel) * minVel;
             }
         }
 
@@ -395,7 +405,7 @@ namespace SphereDivision
                     else settingsForm.createRandomSettings();
                     break;
             }
-            
+
 
             cycleTime = (float)settingsForm.cycleTime;
         }
@@ -458,6 +468,13 @@ namespace SphereDivision
             float screenTop = -1000f;
             float screenBot = 1000f;
 
+            //Advance trailing points and start pointer
+            trailPrev = trailStart;
+            trailStart--;
+            if (trailStart < 1) trailStart += 1600;
+            trailEnd = trailStart + trailLength;// + 1;
+            if (trailEnd > 1601) trailEnd -= 1601;
+
 
             //apply Mouse Gravity (if enabled)
             if (MouseGrav > 0)
@@ -474,10 +491,10 @@ namespace SphereDivision
                 GL.Vertex2(lastMousePos.X, lastMousePos.Y + 8);
                 GL.End();
 
-                for (int c = 0; c < maxCritters; c++)
+                for (int c = 0; c < numCritters; c++)
                 {
                     //get vector pointing from point to mouse
-                    Vector2 g = lastMousePos - bPos[c, 0];
+                    Vector2 g = lastMousePos - bPos[c, trailPrev];
                     float dist = g.Length;
                     Vector2 direction = g.Normalized();
                     if (dist > 0.1f)
@@ -485,15 +502,15 @@ namespace SphereDivision
                         switch (MouseGrav)
                         {
                             case 1: //directional only
-                                bVel[c, 0] += (direction * mouseGravStrength);
+                                bVel[c] += (direction * mouseGravStrength);
                                 break;
                             case 2:
                                 //dist = g.Length;
-                                bVel[c, 0] += (direction * mouseGravStrength / dist);
+                                bVel[c] += (direction * mouseGravStrength / dist);
                                 break;
                             case 3:
                                 dist = dist * dist;
-                                bVel[c, 0] += (direction * mouseGravStrength / dist);
+                                bVel[c] += (direction * mouseGravStrength / dist);
                                 break;
                         }
 
@@ -513,23 +530,23 @@ namespace SphereDivision
                     if (gPos[g].X < screenLeft)
                     {
                         gPos[g].X = screenLeft + (screenLeft - gPos[g].X);
-                        gVel[g].X = (float)random.NextDouble() * maxGravSpeed;
+                        gVel[g].X = minGravSpeed + (float)random.NextDouble() * maxGravSpeed;
                     }
                     else if (gPos[g].X > screenRight)
                     {
                         gPos[g].X = screenRight - (gPos[g].X - screenRight);
-                        gVel[g].X = -(float)random.NextDouble() * maxGravSpeed;
+                        gVel[g].X = -minGravSpeed -(float)random.NextDouble() * maxGravSpeed;
                     }
 
                     if (gPos[g].Y < screenTop)
                     {
                         gPos[g].Y = screenTop + (screenTop - gPos[g].Y);
-                        gVel[g].Y = (float)random.NextDouble() * maxGravSpeed;
+                        gVel[g].Y = minGravSpeed + (float)random.NextDouble() * maxGravSpeed;
                     }
                     else if (gPos[g].Y > screenBot)
                     {
                         gPos[g].Y = screenBot - (gPos[g].Y - screenBot);
-                        gVel[g].Y = -(float)random.NextDouble() * maxGravSpeed;
+                        gVel[g].Y = -minGravSpeed -(float)random.NextDouble() * maxGravSpeed;
                     }
                 }
                 if (showGravPoints)
@@ -547,12 +564,12 @@ namespace SphereDivision
                         GL.End();
                     }
                 }
-                for (int c = 0; c < maxCritters; c++)
+                for (int c = 0; c < numCritters; c++)
                 {
                     for (int g = 0; g < numGravPoints; g++)
                     {
                         //get vector pointing from point to gravwell
-                        Vector2 gravVector = gPos[g] - bPos[c, 0];
+                        Vector2 gravVector = gPos[g] - bPos[c, trailPrev];
                         float dist = gravVector.Length;
                         Vector2 direction = gravVector.Normalized();
                         if (dist > 0.1f)
@@ -560,14 +577,20 @@ namespace SphereDivision
                             switch (gravFalloff)
                             {
                                 case 0:
-                                    bVel[c, 0] += (direction * gravPointStrength * deltaTime);
+                                    bVel[c] += (direction * gravPointStrength * deltaTime);
                                     break;
                                 case 1:
-                                    bVel[c, 0] += (direction * gravPointStrength * deltaTime / dist);
+                                    bVel[c] += (direction * gravPointStrength * deltaTime / dist);
                                     break;
                                 case 2:
                                     dist = dist * dist;
-                                    bVel[c, 0] += (direction * gravPointStrength * deltaTime / dist);
+                                    bVel[c] += (direction * gravPointStrength * deltaTime / dist);
+                                    break;
+                                case 3:
+                                    bVel[c] -= (direction * gravPointStrength * deltaTime / dist);
+                                    break;
+                                case 4:
+                                    bVel[c] -= (direction * gravPointStrength * deltaTime);
                                     break;
                             }
 
@@ -584,7 +607,7 @@ namespace SphereDivision
                 float rho = 28f;
                 float beta = 8f / 3f;
                 float time = 0.025f;
-                for (int c = 0; c < maxCritters; c++)
+                for (int c = 0; c < numCritters; c++)
                 {
                     float xt = 0, yt = 0, zt = 0;
 
@@ -601,16 +624,16 @@ namespace SphereDivision
                     //    zPos[c, 0] = totalSize.Z;
                     //}
 
-                    bPos[c, 1] = bPos[c, 0];
 
 
-                    float xVel = sigma * (bPos[c, 0].Y - bPos[c, 0].X);
-                    float yVel = (bPos[c, 0].X * (rho - zPos[c, 0])) - bPos[c, 0].Y;
-                    float zVel = (bPos[c, 0].X * bPos[c, 0].Y) - (beta * zPos[c, 0]);
 
-                    bPos[c, 0].X += xVel * time;
-                    bPos[c, 0].Y += yVel * time;
-                    zPos[c, 0] += zVel * time;
+                    float xVel = sigma * (bPos[c, trailStart].Y - bPos[c, trailStart].X);
+                    float yVel = (bPos[c, trailStart].X * (rho - zPos[c, trailStart])) - bPos[c, trailStart].Y;
+                    float zVel = (bPos[c, trailStart].X * bPos[c, trailStart].Y) - (beta * zPos[c, trailStart]);
+
+                    bPos[c, trailStart].X += xVel * time;
+                    bPos[c, trailStart].Y += yVel * time;
+                    zPos[c, trailStart] += zVel * time;
 
                     ////rescale to fit on screen
                     //if (bPos[c, 0].X > largest) largest = bPos[c, 0].X;
@@ -626,49 +649,48 @@ namespace SphereDivision
 
                     if (rainbowMode == 3)
                     {
-                        bColor[c, 0] = lookupHSL[rainbowPosition] * brightnessValue[c];
+                        bColor[c, trailStart] = lookupHSL[rainbowPosition] * brightnessValue[c];
                     }
                     else
                     {
-                        bColor[c, 0] = new Vector3(1f, 1f, 1f) * brightnessValue[c];
+                        bColor[c, trailStart] = new Vector3(1f, 1f, 1f) * brightnessValue[c];
                     }
                 }
             }
-            else
+            else //Regular Newtonian Physics for particle movement
             {
 
                 if (edgesOn)
                 {
                     //update point locations and velocities
-                    for (int c = 0; c < maxCritters; c++)
+                    for (int c = 0; c < numCritters; c++)
                     {
-                        bPos[c, 1] = bPos[c, 0];
-                        bPos[c, 0] += bVel[c, 0] * deltaTime;
+                        bPos[c, trailStart] = bPos[c, trailPrev] + bVel[c] * deltaTime;
 
                         //Edge Detection
-                        if (bPos[c, 0].X < screenLeft)
+                        if (bPos[c, trailStart].X < screenLeft)
                         {
-                            bPos[c, 0].X = screenLeft + (screenLeft - bPos[c, 0].X);
-                            bVel[c, 0].X = (float)random.NextDouble() * maxVel;
+                            bPos[c, trailStart].X = screenLeft + (screenLeft - bPos[c, trailStart].X);
+                            bVel[c].X = (float)random.NextDouble() * maxVel;
                             LimitVelocity(c);
                         }
-                        else if (bPos[c, 0].X > screenRight)
+                        else if (bPos[c, trailStart].X > screenRight)
                         {
-                            bPos[c, 0].X = screenRight - (bPos[c, 0].X - screenRight);
-                            bVel[c, 0].X = -(float)random.NextDouble() * maxVel;
+                            bPos[c, trailStart].X = screenRight - (bPos[c, trailStart].X - screenRight);
+                            bVel[c].X = -(float)random.NextDouble() * maxVel;
                             LimitVelocity(c);
                         }
 
-                        if (bPos[c, 0].Y < screenTop)
+                        if (bPos[c, trailStart].Y < screenTop)
                         {
-                            bPos[c, 0].Y = screenTop + (screenTop - bPos[c, 0].Y);
-                            bVel[c, 0].Y = (float)random.NextDouble() * maxVel;
+                            bPos[c, trailStart].Y = screenTop + (screenTop - bPos[c, trailStart].Y);
+                            bVel[c].Y = (float)random.NextDouble() * maxVel;
                             LimitVelocity(c);
                         }
-                        else if (bPos[c, 0].Y > screenBot)
+                        else if (bPos[c, trailStart].Y > screenBot)
                         {
-                            bPos[c, 0].Y = screenBot - (bPos[c, 0].Y - screenBot);
-                            bVel[c, 0].Y = -(float)random.NextDouble() * maxVel;
+                            bPos[c, trailStart].Y = screenBot - (bPos[c, trailStart].Y - screenBot);
+                            bVel[c].Y = -(float)random.NextDouble() * maxVel;
                             LimitVelocity(c);
                         }
                     }
@@ -680,36 +702,35 @@ namespace SphereDivision
                     float lTop = screenTop * 2f;
                     float lBottom = screenBot * 2f;
                     //update point locations and velocities
-                    for (int c = 0; c < maxCritters; c++)
+                    for (int c = 0; c < numCritters; c++)
                     {
-                        bPos[c, 1] = bPos[c, 0];
-                        bPos[c, 0] += bVel[c, 0] * deltaTime;
+                        bPos[c, trailStart] = bPos[c, trailPrev] + bVel[c] * deltaTime;
 
                         //Edge Detection
 
-                        if (bPos[c, 0].X < lLeft)
+                        if (bPos[c, trailStart].X < lLeft)
                         {
-                            bPos[c, 0].X = lLeft + (lLeft - bPos[c, 0].X);
-                            bVel[c, 0].X = (float)random.NextDouble() * maxVel;
+                            bPos[c, trailStart].X = lLeft + (lLeft - bPos[c, trailStart].X);
+                            bVel[c].X = (float)random.NextDouble() * maxVel;
                             LimitVelocity(c);
                         }
-                        else if (bPos[c, 0].X > lRight)
+                        else if (bPos[c, trailStart].X > lRight)
                         {
-                            bPos[c, 0].X = lRight - (bPos[c, 0].X - lRight);
-                            bVel[c, 0].X = -(float)random.NextDouble() * maxVel;
+                            bPos[c, trailStart].X = lRight - (bPos[c, trailStart].X - lRight);
+                            bVel[c].X = -(float)random.NextDouble() * maxVel;
                             LimitVelocity(c);
                         }
 
-                        if (bPos[c, 0].Y < lTop)
+                        if (bPos[c, trailStart].Y < lTop)
                         {
-                            bPos[c, 0].Y = lTop + (lTop - bPos[c, 0].Y);
-                            bVel[c, 0].Y = (float)random.NextDouble() * maxVel;
+                            bPos[c, trailStart].Y = lTop + (lTop - bPos[c, trailStart].Y);
+                            bVel[c].Y = (float)random.NextDouble() * maxVel;
                             LimitVelocity(c);
                         }
-                        else if (bPos[c, 0].Y > lBottom)
+                        else if (bPos[c, trailStart].Y > lBottom)
                         {
-                            bPos[c, 0].Y = lBottom - (bPos[c, 0].Y - lBottom);
-                            bVel[c, 0].Y = -(float)random.NextDouble() * maxVel;
+                            bPos[c, trailStart].Y = lBottom - (bPos[c, trailStart].Y - lBottom);
+                            bVel[c].Y = -(float)random.NextDouble() * maxVel;
                             LimitVelocity(c);
                         }
                     }
@@ -721,7 +742,7 @@ namespace SphereDivision
             //deal with colors and hues:
             if (rainbowMode == 0) //random hues
             {
-                for (int c = 0; c < maxCritters; c++)
+                for (int c = 0; c < numCritters; c++)
                 {
                     hueTimer[c] -= 1;
                     if (hueTimer[c] <= 0)
@@ -749,7 +770,7 @@ namespace SphereDivision
                         }
                     }
 
-                    bColor[c, 0] = lookupHSL[currentHue[c]] * brightnessValue[c];
+                    bColor[c, trailStart] = lookupHSL[currentHue[c]] * brightnessValue[c];
                 }
 
             }
@@ -780,23 +801,23 @@ namespace SphereDivision
                         hueSpeed[0] = 0;
                     }
                 }
-                for (int c = 0; c < maxCritters; c++)
+                for (int c = 0; c < numCritters; c++)
                 {
-                    bColor[c, 0] = lookupHSL[currentHue[0]] * brightnessValue[c];
+                    bColor[c, trailStart] = lookupHSL[currentHue[0]] * brightnessValue[c];
                 }
             }
             else if (rainbowMode == 2) //grayscale
             {
-                for (int c = 0; c < maxCritters; c++)
+                for (int c = 0; c < numCritters; c++)
                 {
-                    bColor[c, 0] = new Vector3(1f, 1f, 1f) * brightnessValue[c];
+                    bColor[c, trailStart] = new Vector3(1f, 1f, 1f) * brightnessValue[c];
                 }
             }
             else// (rainbowMode == 3)
             {
-                for (int c = 0; c < maxCritters; c++)
+                for (int c = 0; c < numCritters; c++)
                 {
-                    bColor[c, 0] = lookupHSL[rainbowPosition] * brightnessValue[c];
+                    bColor[c, trailStart] = lookupHSL[rainbowPosition] * brightnessValue[c];
                 }
             }
 
@@ -877,9 +898,10 @@ namespace SphereDivision
                         thicknessValue[0, 0] = -thicknessValue[0, 0];
                         if (thicknessValue[0, 0] > 10f) thicknessValue[0, 0] = 0f;
                     }
+                    float t = thicknessValue[0, 0];
                     for (int c = 0; c < numCritters; c++)
                     {
-                        thicknessValue[c, 0] = thicknessValue[0, 0];
+                        thicknessValue[c, trailStart] = t;
                     }
 
                 }
@@ -902,6 +924,7 @@ namespace SphereDivision
                             thicknessValue[c, 0] = -thicknessValue[c, 0];
                             if (thicknessValue[c, 0] > 10f) thicknessValue[c, 0] = 0f;
                         }
+                        thicknessValue[c, trailStart] = thicknessValue[c, 0];
                     }
                 }
             }
@@ -909,112 +932,219 @@ namespace SphereDivision
             {
                 for (int c = 0; c < numCritters; c++)
                 {
-                    thicknessValue[c, 0] = lineWidth;
+                    thicknessValue[c, trailStart] = lineWidth;
                 }
             }
 
-            if (thicknessMode || connectMode > 0)
-            {
-                //advance each trailing point
-                for (int c = 0; c < numCritters; c++)
-                {
-                    for (int p = trailLength; p > 0; p--)
-                    {
-                        bPos[c, p] = bPos[c, p - 1];
-                        bColor[c, p] = bColor[c, p - 1];
-                        thicknessValue[c, p] = thicknessValue[c, p - 1];
-                    }
-                }
-            }
-            else
-            {
-                //advance each trailing point
-                for (int c = 0; c < numCritters; c++)
-                {
-                    for (int p = trailLength; p > 0; p--)
-                    {
-                        bPos[c, p] = bPos[c, p - 1];
-                        bColor[c, p] = bColor[c, p - 1];
-                    }
-                }
-            }
+
+
+            //if (thicknessMode || connectMode > 0)
+            //{
+            //    //advance each trailing point
+            //    for (int c = 0; c < numCritters; c++)
+            //    {
+            //        for (int p = trailLength; p > 0; p--)
+            //        {
+            //            bPos[c, p] = bPos[c, p - 1];
+            //            bColor[c, p] = bColor[c, p - 1];
+            //            thicknessValue[c, p] = thicknessValue[c, p - 1];
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    //advance each trailing point
+            //    for (int c = 0; c < numCritters; c++)
+            //    {
+            //        for (int p = trailLength; p > 0; p--)
+            //        {
+            //            bPos[c, p] = bPos[c, p - 1];
+            //            bColor[c, p] = bColor[c, p - 1];
+            //        }
+            //    }
+            //}
 
             if (connectMode == 0)
             {
-
-                // draw each point's position
-                for (int c = 0; c < numCritters; c++)
+                //Console.WriteLine(bPos[0, trailStart].X.ToString() + ", " + bPos[0, trailStart].Y.ToString());
+                if (trailEnd > trailStart)
                 {
-                    GL.LineWidth(thicknessValue[c, 0]);
-                    GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineStrip);
-                    for (int p = 1; p < trailLength; p += trailSkip)
+                    // draw each point's position
+                    for (int c = 0; c < numCritters; c++)
                     {
-                        //GL.LineWidth(thicknessValue[c, p]);
-                        //for (int x = 1; x < trailLength; x++) { Console.WriteLine(thicknessValue[c, x]); }
+                        GL.LineWidth(thicknessValue[c, trailStart]);
+                        GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineStrip);
 
-                        GL.Color3(bColor[c, p]);
-                        GL.Vertex2(bPos[c, p]);
-                    }
-                    GL.End();
-                }
-            }
-            else if (connectMode == 1) //Squares
-            {
-
-                // draw each point's position
-                for (int c = 0; c < numCritters; c++)
-                {
-                    //float sSize = lineWidth * 3f;
-
-                    for (int p = 1; p < trailLength; p += trailSkip)
-                    {
-                        GL.LineWidth(thicknessValue[c, p]);
-                        GL.Color3(bColor[c, p]);
-                        GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
-                        GL.Vertex2(bPos[c, p].X, bPos[c, p].Y);
-                        GL.Vertex2(bPos[c, p].X, bPos[c, p - 1].Y);
-                        GL.Vertex2(bPos[c, p - 1].X, bPos[c, p - 1].Y);
-                        GL.Vertex2(bPos[c, p - 1].X, bPos[c, p].Y);
+                        for (int p = trailStart; p < trailEnd; p += trailSkip)
+                        {
+                            GL.Color3(bColor[c, p]);
+                            GL.Vertex2(bPos[c, p]);
+                        }
                         GL.End();
                     }
                 }
+                else//otherwise we need to wrap around
+                {
+                    for (int c = 0; c < numCritters; c++)
+                    {
+                        GL.LineWidth(thicknessValue[c, trailStart]);
+                        GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineStrip);
+                        for (int p = trailStart; p < 1601; p += trailSkip)
+                        {
+                            GL.Color3(bColor[c, p]);
+                            GL.Vertex2(bPos[c, p]);
+                        }
+                        //now that we've passed the threshold, we need to wrap around accounting for trailskip size
+
+                        int wrap = trailSkip - ((maxPoints - trailStart) % trailSkip);
+
+                        for (int p = wrap; p < trailEnd; p += trailSkip)
+                        {
+                            GL.Color3(bColor[c, p]);
+                            GL.Vertex2(bPos[c, p]);
+                        }
+                        GL.End();
+                    }
+
+                }
+            }
+
+            else if (connectMode == 1) //Squares
+            {
+                //Console.WriteLine(trailEnd);
+                int tEnd = trailEnd - 1;
+                if (tEnd < 1) { tEnd = maxPoints - 1; }
+                if (tEnd >= trailStart)
+                {
+
+                    // draw each point's position
+                    for (int c = 0; c < numCritters; c++)
+                    {
+                        for (int p = trailStart; p < tEnd; p += trailSkip)
+                        {
+                            int prev = p + 1;
+                            if (prev >= maxPoints) prev -= maxPoints;
+                            GL.LineWidth(thicknessValue[c, p]);
+                            GL.Color3(bColor[c, p]);
+                            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
+                            GL.Vertex2(bPos[c, p].X, bPos[c, p].Y);
+                            GL.Vertex2(bPos[c, p].X, bPos[c, prev].Y);
+                            GL.Vertex2(bPos[c, prev].X, bPos[c, prev].Y);
+                            GL.Vertex2(bPos[c, prev].X, bPos[c, p].Y);
+                            GL.End();
+                        }
+                    }
+                }
+                else
+                {
+                    for (int c = 0; c < numCritters; c++)
+                    {
+                        //need to integrate skipping into this, too
+                        for (int p = trailStart; p < maxPoints - 1; p += trailSkip)
+                        {
+                            //int prev = p - 1;
+                            //if (prev < 0) prev += maxPoints;
+                            int prev = p + 1;
+                            if (prev >= maxPoints) prev -= maxPoints;
+                            GL.LineWidth(thicknessValue[c, p]);
+                            GL.Color3(bColor[c, p]);
+                            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
+                            GL.Vertex2(bPos[c, p].X, bPos[c, p].Y);
+                            GL.Vertex2(bPos[c, p].X, bPos[c, prev].Y);
+                            GL.Vertex2(bPos[c, prev].X, bPos[c, prev].Y);
+                            GL.Vertex2(bPos[c, prev].X, bPos[c, p].Y);
+                            GL.End();
+                        }
+
+                        int wrap = trailSkip - ((maxPoints - trailStart) % trailSkip);
+
+                        for (int p = wrap; p < tEnd; p += trailSkip)
+                        {
+                            int prev = p + 1;
+                            if (prev >= maxPoints) prev -= maxPoints;
+                            GL.LineWidth(thicknessValue[c, p]);
+                            GL.Color3(bColor[c, p]);
+                            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
+                            GL.Vertex2(bPos[c, p].X, bPos[c, p].Y);
+                            GL.Vertex2(bPos[c, p].X, bPos[c, prev].Y);
+                            GL.Vertex2(bPos[c, prev].X, bPos[c, prev].Y);
+                            GL.Vertex2(bPos[c, prev].X, bPos[c, p].Y);
+                            GL.End();
+                        }
+                    }
+                }
+
             }
             else if (connectMode == 2) //Circles
             {
+                int tEnd = trailEnd - 1;
+                if (tEnd < 1) { tEnd = maxPoints; }
+                //Console.WriteLine(trailEnd + ", " + deltaTime);
 
-                // draw each point's position
-                for (int c = 0; c < numCritters; c++)
+                if (tEnd >= trailStart)
                 {
-
-
-
-                    for (int p = 1; p < trailLength; p += trailSkip)
+                    // draw each point's position
+                    for (int c = 0; c < numCritters; c++)
                     {
 
-                        float sSize = new Vector2(bPos[c, p].X - bPos[c, p - 1].X, bPos[c, p].Y - bPos[c, p - 1].Y).Length / 2f;
-                        GL.LineWidth(thicknessValue[c, p]);
-                        GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
-                        GL.Color3(bColor[c, p]);
+                        circleSize[c, trailStart] = new Vector2(bPos[c, trailStart].X - bPos[c, trailPrev].X, bPos[c, trailStart].Y - bPos[c, trailPrev].Y).Length / 2f;
 
-                        for (int i = 0; i < circlePoints.Length; i++)
+                        for (int p = trailStart; p < tEnd; p += trailSkip)
                         {
-                            GL.Vertex2(bPos[c, p].X + (circlePoints[i].X * sSize), bPos[c, p].Y + (circlePoints[i].Y * sSize));
+                            float sSize = circleSize[c, p];
+                            GL.LineWidth(thicknessValue[c, p]);
+                            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
+                            GL.Color3(bColor[c, p]);
+
+                            for (int i = 0; i < circlePoints.Length; i++)
+                            {
+                                GL.Vertex2(bPos[c, p].X + (circlePoints[i].X * sSize), bPos[c, p].Y + (circlePoints[i].Y * sSize));
+                            }
+                            GL.End();
                         }
-                        GL.End();
+                    }
+                }
+                else
+                {
+
+                    for (int c = 0; c < numCritters; c++)
+                    {
+                        circleSize[c, trailStart] = new Vector2(bPos[c, trailStart].X - bPos[c, trailPrev].X, bPos[c, trailStart].Y - bPos[c, trailPrev].Y).Length / 2f;
+
+                        for (int p = trailStart; p < maxPoints; p += trailSkip)
+                        {
+                            float sSize = circleSize[c, p];
+                            GL.LineWidth(thicknessValue[c, p]);
+                            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
+                            GL.Color3(bColor[c, p]);
+
+                            for (int i = 0; i < circlePoints.Length; i++)
+                            {
+                                GL.Vertex2(bPos[c, p].X + (circlePoints[i].X * sSize), bPos[c, p].Y + (circlePoints[i].Y * sSize));
+                            }
+                            GL.End();
+                        }
+
+                        int wrap = trailSkip - ((maxPoints - trailStart) % trailSkip);
+
+                        for (int p = wrap; p < tEnd; p += trailSkip)
+                        {
+                            float sSize = circleSize[c, p];
+                            GL.LineWidth(thicknessValue[c, p]);
+                            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
+                            GL.Color3(bColor[c, p]);
+
+                            for (int i = 0; i < circlePoints.Length; i++)
+                            {
+                                GL.Vertex2(bPos[c, p].X + (circlePoints[i].X * sSize), bPos[c, p].Y + (circlePoints[i].Y * sSize));
+                            }
+                            GL.End();
+                        }
                     }
                 }
             }
             else if (connectMode == 3) //Mystify
             {
-                ////advance each trailing point
-                //for (int c = 0; c < maxCritters; c++)
-                //{
-                //    for (int p = 8; p > 0; p--)
-                //    {
-                //        bPos[c, p] = bPos[c, p - 1];
-                //    }
-                //}
-
                 // draw each point's position
                 int maxUsed = (int)(numCritters / polygonLength) * polygonLength;
                 if (maxUsed == 0)
@@ -1022,25 +1152,85 @@ namespace SphereDivision
                     numCritters = polygonLength;
                     settingsForm.numCritters = numCritters;
                     maxUsed = polygonLength;
+                    settingsForm.fixCritterCount(polygonLength);
                     initCritters(); //reset just in case
                 }
-                for (int c = 0; c < maxUsed; c += polygonLength)
+
+                //for (int c = 0; c < maxUsed; c += polygonLength)
+                //{
+
+                //    for (int p = 0; p < trailLength; p += trailSkip)
+                //    {
+                //        GL.LineWidth(thicknessValue[c, p]);
+                //        GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
+                //        GL.Color3(bColor[c, p]);
+
+                //        for (int v = 0; v < polygonLength; v++)
+                //        {
+                //            GL.Vertex2(bPos[c + v, p]);
+                //        }
+                //        GL.End();
+                //    }
+                //}
+
+                if (trailEnd > trailStart)
                 {
+                    // draw each point's position
+                    for (int c = 0; c < maxUsed; c += polygonLength)
+                    {
 
-
-
-                    for (int p = 0; p < trailLength; p += trailSkip)
-                    {GL.LineWidth(thicknessValue[c, p]);
-                        GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
-                        GL.Color3(bColor[c, p]);
-                        
-                        for (int v = 0; v < polygonLength; v++)
+                        for (int p = trailStart; p < trailEnd; p += trailSkip)
                         {
-                            GL.Vertex2(bPos[c + v, p]);
+                            GL.LineWidth(thicknessValue[c, p]);
+                            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
+                            GL.Color3(bColor[c, p]);
+                            for (int v = 0; v < polygonLength; v++)
+                            {
+                                GL.Vertex2(bPos[c + v, p]);
+                            }
+                            GL.End();
                         }
-                        GL.End();
                     }
                 }
+                else//otherwise we need to wrap around
+                {
+                    for (int c = 0; c < maxUsed; c += polygonLength)
+                    {
+
+                        for (int p = trailStart; p < 1601; p += trailSkip)
+                        {
+                            GL.LineWidth(thicknessValue[c, p]);
+                            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
+                            GL.Color3(bColor[c, p]);
+                            for (int v = 0; v < polygonLength; v++)
+                            {
+                                GL.Vertex2(bPos[c + v, p]);
+                            }
+                            GL.End();
+                        }
+                        //now that we've passed the threshold, we need to wrap around accounting for trailskip size
+
+                        int wrap = trailSkip - ((maxPoints - trailStart) % trailSkip);
+
+                        for (int p = wrap; p < trailEnd; p += trailSkip)
+                        {
+                            GL.LineWidth(thicknessValue[c, p]);
+                            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.LineLoop);
+                            GL.Color3(bColor[c, p]);
+                            for (int v = 0; v < polygonLength; v++)
+                            {
+                                GL.Vertex2(bPos[c + v, p]);
+                            }
+                            GL.End();
+                        }
+                    }
+
+                }
+
+
+
+
+
             }
             else if (connectMode == 4) //Solid Mystify (Bowties)
             {
@@ -1052,35 +1242,133 @@ namespace SphereDivision
                     numCritters = polygonLength;
                     settingsForm.numCritters = numCritters;
                     maxUsed = polygonLength;
+                    settingsForm.fixCritterCount(polygonLength);
                     initCritters(); //reset just in case
                 }
-                for (int c = 0; c < maxUsed; c += polygonLength)
+                //for (int c = 0; c < maxUsed; c += polygonLength)
+                //{
+
+                //    for (int p = 0; p < trailLength; p += trailSkip)
+                //    {
+                //        for (int v = 0; v < polygonLength - 1; v++)
+                //        {
+                //            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
+                //            GL.Color3(bColor[c, p]);
+                //            GL.LineWidth(thicknessValue[c, p]);
+                //            GL.Vertex2(bPos[c + v, p]);
+                //            GL.Vertex2(bPos[c + v + 1, p]);
+                //            GL.Vertex2(bPos[c + v + 1, p + 1]);
+                //            GL.Vertex2(bPos[c + v, p + 1]);
+                //            GL.End();
+
+                //        }
+                //        GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
+                //        GL.Color3(bColor[c, p]);
+                //        GL.LineWidth(thicknessValue[c, p]);
+                //        GL.Vertex2(bPos[c + polygonLength - 1, p]);
+                //        GL.Vertex2(bPos[c, p]);
+                //        GL.Vertex2(bPos[c, p + 1]);
+                //        GL.Vertex2(bPos[c + polygonLength - 1, p + 1]);
+                //        GL.End();
+
+                //    }
+                //}
+
+                //Console.WriteLine(trailStart);
+                int tEnd = trailEnd - 1;
+                if (tEnd < 1) { tEnd = maxPoints - 1; }
+                if (tEnd >= trailStart)
                 {
 
-                    for (int p = 0; p < trailLength; p += trailSkip)
+                    // draw each point's position
+                    for (int c = 0; c < maxUsed; c += polygonLength)
                     {
-                        for (int v = 0; v < polygonLength - 1; v++)
+
+                        for (int p = trailStart; p < tEnd; p += trailSkip)
                         {
+                            int prev = p + 1;
+                            if (prev >= maxPoints) prev -= maxPoints;
+                            for (int v = 0; v < polygonLength - 1; v++)
+                            {
+                                GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
+                                GL.Color3(bColor[c, p]);
+                                GL.LineWidth(thicknessValue[c, p]);
+                                GL.Vertex2(bPos[c + v, p]);
+                                GL.Vertex2(bPos[c + v + 1, p]);
+                                GL.Vertex2(bPos[c + v + 1, prev]);
+                                GL.Vertex2(bPos[c + v, prev]);
+                                GL.End();
+                            }
                             GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
                             GL.Color3(bColor[c, p]);
                             GL.LineWidth(thicknessValue[c, p]);
-                            GL.Vertex2(bPos[c + v, p]);
-                            GL.Vertex2(bPos[c + v + 1, p]);
-                            GL.Vertex2(bPos[c + v + 1, p + 1]);
-                            GL.Vertex2(bPos[c + v, p + 1]);
+                            GL.Vertex2(bPos[c + polygonLength - 1, p]);
+                            GL.Vertex2(bPos[c, p]);
+                            GL.Vertex2(bPos[c, prev]);
+                            GL.Vertex2(bPos[c + polygonLength - 1, prev]);
                             GL.End();
-
                         }
-                        GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
-                        GL.Color3(bColor[c, p]);
-                        GL.LineWidth(thicknessValue[c, p]);
-                        GL.Vertex2(bPos[c + polygonLength - 1, p]);
-                        GL.Vertex2(bPos[c, p]);
-                        GL.Vertex2(bPos[c, p + 1]);
-                        GL.Vertex2(bPos[c + polygonLength - 1, p + 1]);
-                        GL.End();
-
                     }
+                }
+                else//otherwise we need to wrap around
+                {
+                    for (int c = 0; c < maxUsed; c += polygonLength)
+                    {
+
+                        for (int p = trailStart; p < maxPoints; p += trailSkip)
+                        {
+                            int prev = p + 1;
+                            if (prev >= maxPoints) prev -= maxPoints;
+                            for (int v = 0; v < polygonLength - 1; v++)
+                            {
+                                GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
+                                GL.Color3(bColor[c, p]);
+                                GL.LineWidth(thicknessValue[c, p]);
+                                GL.Vertex2(bPos[c + v, p]);
+                                GL.Vertex2(bPos[c + v + 1, p]);
+                                GL.Vertex2(bPos[c + v + 1, prev]);
+                                GL.Vertex2(bPos[c + v, prev]);
+                                GL.End();
+                            }
+                            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
+                            GL.Color3(bColor[c, p]);
+                            GL.LineWidth(thicknessValue[c, p]);
+                            GL.Vertex2(bPos[c + polygonLength - 1, p]);
+                            GL.Vertex2(bPos[c, p]);
+                            GL.Vertex2(bPos[c, prev]);
+                            GL.Vertex2(bPos[c + polygonLength - 1, prev]);
+                            GL.End();
+                        }
+                        //now that we've passed the threshold, we need to wrap around accounting for trailskip size
+
+                        int wrap = trailSkip - ((maxPoints - trailStart) % trailSkip);
+
+                        for (int p = wrap; p < tEnd; p += trailSkip)
+                        {
+                            int prev = p + 1;
+                            if (prev >= maxPoints) prev -= maxPoints;
+                            for (int v = 0; v < polygonLength - 1; v++)
+                            {
+                                GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
+                                GL.Color3(bColor[c, p]);
+                                GL.LineWidth(thicknessValue[c, p]);
+                                GL.Vertex2(bPos[c + v, p]);
+                                GL.Vertex2(bPos[c + v + 1, p]);
+                                GL.Vertex2(bPos[c + v + 1, prev]);
+                                GL.Vertex2(bPos[c + v, prev]);
+                                GL.End();
+                            }
+                            GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Polygon);
+                            GL.Color3(bColor[c, p]);
+                            GL.LineWidth(thicknessValue[c, p]);
+                            GL.Vertex2(bPos[c + polygonLength - 1, p]);
+                            GL.Vertex2(bPos[c, p]);
+                            GL.Vertex2(bPos[c, prev]);
+                            GL.Vertex2(bPos[c + polygonLength - 1, prev]);
+                            GL.End();
+                        }
+                    }
+
                 }
             }
 
@@ -1214,17 +1502,17 @@ namespace SphereDivision
                     Random r = new Random();
                     for (int c = 0; c < maxCritters; c++)
                     {
-                        bPos[c, 0].X = (float)r.NextDouble() * 10f;
-                        bPos[c, 0].Y = (float)r.NextDouble() * 10f;
-                        bVel[c, 0].X = 0;
-                        bVel[c, 0].Y = 0;
+                        bPos[c, trailStart].X = (float)r.NextDouble() * 10f;
+                        bPos[c, trailStart].Y = (float)r.NextDouble() * 10f;
+                        bVel[c].X = 0;
+                        bVel[c].Y = 0;
                         zPos[c, 0] = (float)r.NextDouble() * 10f;
                         for (int p = 0; p < maxPoints; p++)
                         {
-                            bPos[c, p].X = bPos[c, 0].X;
-                            bPos[c, p].Y = bPos[c, 0].Y;
-                            bVel[c, p].X = 0;
-                            bVel[c, p].Y = 0;
+                            bPos[c, p].X = bPos[c, trailStart].X;
+                            bPos[c, p].Y = bPos[c, trailStart].Y;
+                            //bVel[c].X = 0;
+                            //bVel[c].Y = 0;
                             bColor[c, p] = new Vector3(1f, 1f, 1f);
                         }
                     }
@@ -1405,6 +1693,9 @@ namespace SphereDivision
             Random r = new Random();
             int thisHue = r.Next(0, 768);
 
+            trailStart = 1;
+            trailPrev = 0;
+            trailEnd = trailStart + trailLength;
 
             if (r.NextDouble() > 0.8)
             {//totally random positions and motion:
@@ -1412,10 +1703,10 @@ namespace SphereDivision
                 {
                     bPos[c, 0].X = screenLeft + ((float)r.NextDouble() * (screenRight - screenLeft));
                     bPos[c, 0].Y = screenTop + ((float)r.NextDouble() * (screenBot - screenTop));
-                    if (r.NextDouble() > 0.5) bVel[c, 0].X = (float)r.NextDouble() * maxVel;
-                    else bVel[c, 0].X = (float)r.NextDouble() * -maxVel;
-                    if (r.NextDouble() > 0.5) bVel[c, 0].Y = (float)r.NextDouble() * maxVel;
-                    else bVel[c, 0].Y = (float)r.NextDouble() * -maxVel;
+                    if (r.NextDouble() > 0.5) bVel[c].X = (float)r.NextDouble() * maxVel;
+                    else bVel[c].X = (float)r.NextDouble() * -maxVel;
+                    if (r.NextDouble() > 0.5) bVel[c].Y = (float)r.NextDouble() * maxVel;
+                    else bVel[c].Y = (float)r.NextDouble() * -maxVel;
                 }
             }
             else if (r.NextDouble() > 0.7)
@@ -1426,13 +1717,13 @@ namespace SphereDivision
                     bPos[c, 0].Y = 0f;
                     double a = r.NextDouble() * 6.28;
                     float v = (float)r.NextDouble() * maxVel;
-                    bVel[c, 0].X = (float)Math.Sin(a) * v;
-                    bVel[c, 0].Y = (float)Math.Cos(a) * v;
+                    bVel[c].X = (float)Math.Sin(a) * v;
+                    bVel[c].Y = (float)Math.Cos(a) * v;
                 }
             }
             else if (r.NextDouble() > 0.5)
             { //explode from a corner
-                switch(r.Next(4))
+                switch (r.Next(4))
                 {
                     case 0: //upper left
                         for (int c = 0; c < maxCritters; c++)
@@ -1441,8 +1732,8 @@ namespace SphereDivision
                             bPos[c, 0].Y = screenTop;
                             double a = (r.NextDouble() * 1.57) + 1.57;
                             float v = (float)r.NextDouble() * maxVel;
-                            bVel[c, 0].X = (float)Math.Sin(a) * v;
-                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                            bVel[c].X = (float)Math.Sin(a) * v;
+                            bVel[c].Y = (float)Math.Cos(a) * -v;
                         }
                         break;
                     case 1: //upper right
@@ -1450,10 +1741,10 @@ namespace SphereDivision
                         {
                             bPos[c, 0].X = screenRight;
                             bPos[c, 0].Y = screenTop;
-                            double a = (r.NextDouble() * 1.57) -3.14159;
+                            double a = (r.NextDouble() * 1.57) - 3.14159;
                             float v = (float)r.NextDouble() * maxVel;
-                            bVel[c, 0].X = (float)Math.Sin(a) * v;
-                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                            bVel[c].X = (float)Math.Sin(a) * v;
+                            bVel[c].Y = (float)Math.Cos(a) * -v;
                         }
                         break;
                     case 2: //From the right
@@ -1463,8 +1754,8 @@ namespace SphereDivision
                             bPos[c, 0].Y = screenTop + ((float)r.NextDouble() * (screenBot - screenTop));
                             double a = (r.NextDouble() * 0.2) - 1.67;
                             float v = (float)r.NextDouble() * maxVel;
-                            bVel[c, 0].X = (float)Math.Sin(a) * v;
-                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                            bVel[c].X = (float)Math.Sin(a) * v;
+                            bVel[c].Y = (float)Math.Cos(a) * -v;
                         }
                         break;
                     case 3: //lower left
@@ -1474,14 +1765,14 @@ namespace SphereDivision
                             bPos[c, 0].Y = screenTop + ((float)r.NextDouble() * (screenBot - screenTop));
                             double a = (r.NextDouble() * 0.2) + 1.47;
                             float v = (float)r.NextDouble() * maxVel;
-                            bVel[c, 0].X = (float)Math.Sin(a) * v;
-                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                            bVel[c].X = (float)Math.Sin(a) * v;
+                            bVel[c].Y = (float)Math.Cos(a) * -v;
                         }
                         break;
 
                 }
 
-                
+
             }
             else //Rain mode: all start at one edge of the screen going nearly the same direction.
             {
@@ -1492,10 +1783,10 @@ namespace SphereDivision
                         {
                             bPos[c, 0].X = screenLeft + ((float)r.NextDouble() * (screenRight - screenLeft));
                             bPos[c, 0].Y = screenTop;
-                            double a = (r.NextDouble() * 0.3) -0.15;
+                            double a = (r.NextDouble() * 0.3) - 0.15;
                             float v = (float)r.NextDouble() * maxVel;
-                            bVel[c, 0].X = (float)Math.Sin(a) * v;
-                            bVel[c, 0].Y = (float)Math.Cos(a) * v;
+                            bVel[c].X = (float)Math.Sin(a) * v;
+                            bVel[c].Y = (float)Math.Cos(a) * v;
                         }
                         break;
                     case 1: //Bottom
@@ -1505,8 +1796,8 @@ namespace SphereDivision
                             bPos[c, 0].Y = screenBot;
                             double a = (r.NextDouble() * 0.3) - 0.15;
                             float v = (float)r.NextDouble() * maxVel;
-                            bVel[c, 0].X = (float)Math.Sin(a) * v;
-                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                            bVel[c].X = (float)Math.Sin(a) * v;
+                            bVel[c].Y = (float)Math.Cos(a) * -v;
                         }
                         break;
                     case 2: //right
@@ -1516,8 +1807,8 @@ namespace SphereDivision
                             bPos[c, 0].Y = screenBot;
                             double a = (r.NextDouble() * 1.57) - 1.57;
                             float v = (float)r.NextDouble() * maxVel;
-                            bVel[c, 0].X = (float)Math.Sin(a) * v;
-                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                            bVel[c].X = (float)Math.Sin(a) * v;
+                            bVel[c].Y = (float)Math.Cos(a) * -v;
                         }
                         break;
                     case 3: //lower left
@@ -1527,8 +1818,8 @@ namespace SphereDivision
                             bPos[c, 0].Y = screenBot;
                             double a = (r.NextDouble() * 1.57);
                             float v = (float)r.NextDouble() * maxVel;
-                            bVel[c, 0].X = (float)Math.Sin(a) * v;
-                            bVel[c, 0].Y = (float)Math.Cos(a) * -v;
+                            bVel[c].X = (float)Math.Sin(a) * v;
+                            bVel[c].Y = (float)Math.Cos(a) * -v;
                         }
                         break;
 
@@ -1543,8 +1834,6 @@ namespace SphereDivision
                 {
                     bPos[c, p].X = bPos[c, 0].X;
                     bPos[c, p].Y = bPos[c, 0].Y;
-                    bVel[c, p].X = bVel[c, 0].X;
-                    bVel[c, p].Y = bVel[c, 0].Y;
                     bColor[c, p] = new Vector3(0f, 0f, 0f);
                 }
                 if (brightnessSynch)
@@ -1587,8 +1876,8 @@ namespace SphereDivision
                 {
                     gPos[g].X = screenLeft + ((float)r.NextDouble() * (screenRight - screenLeft));
                     gPos[g].Y = screenTop + ((float)r.NextDouble() * (screenBot - screenTop));
-                    gVel[g].X = (float)r.NextDouble() * maxGravSpeed;
-                    gVel[g].Y = (float)r.NextDouble() * maxGravSpeed;
+                    gVel[g].X = minGravSpeed + (float)r.NextDouble() * maxGravSpeed;
+                    gVel[g].Y = minGravSpeed + (float)r.NextDouble() * maxGravSpeed;
                 }
 
 

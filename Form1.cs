@@ -55,7 +55,6 @@ namespace SphereDivision
             checkBox2.Checked = (r.NextDouble() > 0.25);
             trackBar8.Value = r.Next(1, 17);
             trackBar3.Value = r.Next(1, 101);
-            listBox3.SelectedIndex = r.Next(3);
 
             int total;
             do
@@ -75,8 +74,21 @@ namespace SphereDivision
 
             if (r.NextDouble() > 0.5) checkBox1.Checked = true; else checkBox1.Checked = false;
 
-            
-            trackBarPolygonLength.Value = r.Next(2, 25);
+            //pick a grav type
+            if (checkBox1.Checked) //if edges are solid
+            {//maybe we can try antigrav
+                listBox3.SelectedIndex = r.Next(3);
+                if (r.NextDouble() < 0.05) //only rarely do antigrav
+                { //since it often results in a boring setup
+                    listBox3.SelectedIndex = r.Next(2) + 3;
+                }
+            }
+            else
+            {
+                listBox3.SelectedIndex = r.Next(3);
+            }
+
+            trackBarPolygonLength.Value = r.Next(2, 21);
 
 
             if (r.NextDouble() < 0.1) trackBar7.Value = r.Next(1, 100); else trackBar7.Value = 1;
@@ -230,6 +242,7 @@ namespace SphereDivision
         }
 
 
+
         private void changeTrailLength(object sender, EventArgs e)
         {
             int t = trackBarTrailLength.Value;
@@ -258,7 +271,7 @@ namespace SphereDivision
                 trailLength = 620 + ((t - 100) * 32);
             }
 
-            if (trailLength < 3) trailLength = 3;
+            //if (trailLength < 3) trailLength = 3;
             groupBox8.Text = "Trail Length " + (trailLength - 2).ToString();
         }
 
@@ -283,7 +296,41 @@ namespace SphereDivision
 
         private void changeBrightnessSpeed(object sender, EventArgs e)
         {
-            brightnessCycleSpeed = trackBar4.Value / 200f;
+            
+            switch (trackBar4.Value)
+            {
+                case 1:
+                    brightnessCycleSpeed = 0.002f;
+                    break;
+                case 2:
+                    brightnessCycleSpeed = 0.005f;
+                    break;
+                case 3:
+                    brightnessCycleSpeed = 0.01f;
+                    break;
+                case 4:
+                    brightnessCycleSpeed = 0.025f;
+                    break;
+                case 5:
+                    brightnessCycleSpeed = 0.05f;
+                    break;
+                case 6:
+                    brightnessCycleSpeed = 0.1f;
+                    break;
+                case 7:
+                    brightnessCycleSpeed = 0.125f;
+                    break;
+                case 8:
+                    brightnessCycleSpeed = 0.25f;
+                    break;
+                case 9:
+                    brightnessCycleSpeed = 0.5f;
+                    break;
+                case 10:
+                    brightnessCycleSpeed = 1f;
+                    break;
+            }
+            
             groupBox13.Text = "Speed " + trackBar4.Value.ToString();
         }
 
@@ -315,49 +362,55 @@ namespace SphereDivision
             groupBox2.Text = numGravPoints.ToString() + "Auto Grav Points";
         }
 
+
+        public void fixCritterCount(int newSize)
+        {
+            if (newSize < 21) trackBar1.Value = newSize;
+        }
+
         private void changeCritters(object sender, EventArgs e)
         {
             int t = trackBar1.Value;
             //1-16 are direct
-            if (t < 11)
+            if (t < 21)
             {
                 numCritters = t;
             }
-            else if (t < 21)
-            {
-                numCritters = t * 2;
-            }
             else if (t < 31)
             {
-                numCritters = t * 4;
+                numCritters = 20 + ((t - 20) * 2);
             }
             else if (t < 41)
             {
-                numCritters = t * 8;
+                numCritters = 40 + ((t - 30) * 4);
             }
             else if (t < 51)
             {
-                numCritters = t * 16;
+                numCritters = 80 + ((t - 40) * 8);
             }
             else if (t < 61)
             {
-                numCritters = t * 32;
+                numCritters = 160 + ((t - 50) * 16);
             }
             else if (t < 71)
             {
-                numCritters = t * 64;
+                numCritters = 320 + ((t - 60) * 32);
             }
             else if (t < 81)
             {
-                numCritters = t * 128;
+                numCritters = 640 + ((t - 70) * 64);
+            }
+            else if (t < 86)
+            {
+                numCritters = 1280 + ((t - 80) * 128);
             }
             else if (t < 91)
             {
-                numCritters = t * 256;
+                numCritters = 1920 + ((t - 85) * 256);
             }
             else
             {
-                numCritters = t * 512;
+                numCritters = 3200 + ((t - 90) * 2000); 
             }
             groupBox1.Text = numCritters.ToString() + " Critters ";
         }
@@ -563,8 +616,10 @@ namespace SphereDivision
                 gravFalloff = binaryReader.ReadInt32();
 
                 trackBar1.Value = numCritters;
+                changeCritters(sender,e);
                 checkBox1.Checked = edgesOn;
                 listBoxDrawingStyle.SelectedIndex = connectMode;
+                if (polygonLength > 20) polygonLength = 20;
                 trackBarPolygonLength.Value = polygonLength;
                 trackBarTrailLength.Value = trailLength;
 
@@ -609,6 +664,11 @@ namespace SphereDivision
         private void checkBox10_CheckedChanged(object sender, EventArgs e)
         {
             reExplode = checkBox10.Checked;
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://www.youtube.com/channel/UCoK_3oUq4PWcMrxpUqHQrGw" as string);
         }
     }
 }

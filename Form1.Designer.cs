@@ -84,6 +84,7 @@ namespace SphereDivision
             this.labelFPS = new System.Windows.Forms.Label();
             this.labelMS = new System.Windows.Forms.Label();
             this.groupBox22 = new System.Windows.Forms.GroupBox();
+            this.checkBox10 = new System.Windows.Forms.CheckBox();
             this.groupBox23 = new System.Windows.Forms.GroupBox();
             this.trackBar2 = new System.Windows.Forms.TrackBar();
             this.checkBox6 = new System.Windows.Forms.CheckBox();
@@ -92,7 +93,7 @@ namespace SphereDivision
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.checkBox10 = new System.Windows.Forms.CheckBox();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -146,7 +147,7 @@ namespace SphereDivision
             // trackBar1
             // 
             this.trackBar1.Location = new System.Drawing.Point(6, 19);
-            this.trackBar1.Maximum = 90;
+            this.trackBar1.Maximum = 100;
             this.trackBar1.Minimum = 1;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(130, 45);
@@ -467,7 +468,7 @@ namespace SphereDivision
             // trackBarPolygonLength
             // 
             this.trackBarPolygonLength.Location = new System.Drawing.Point(6, 19);
-            this.trackBarPolygonLength.Maximum = 24;
+            this.trackBarPolygonLength.Maximum = 20;
             this.trackBarPolygonLength.Minimum = 2;
             this.trackBarPolygonLength.Name = "trackBarPolygonLength";
             this.trackBarPolygonLength.Size = new System.Drawing.Size(117, 45);
@@ -499,7 +500,7 @@ namespace SphereDivision
             this.groupBox9.Controls.Add(this.groupBox2);
             this.groupBox9.Location = new System.Drawing.Point(343, 127);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(200, 267);
+            this.groupBox9.Size = new System.Drawing.Size(200, 274);
             this.groupBox9.TabIndex = 4;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Gravity Points";
@@ -520,7 +521,7 @@ namespace SphereDivision
             this.groupBox11.Controls.Add(this.listBox3);
             this.groupBox11.Location = new System.Drawing.Point(6, 171);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(182, 87);
+            this.groupBox11.Size = new System.Drawing.Size(182, 96);
             this.groupBox11.TabIndex = 5;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Strength Falloff";
@@ -531,10 +532,12 @@ namespace SphereDivision
             this.listBox3.Items.AddRange(new object[] {
             "None",
             "Distance",
-            "Dist Squared"});
+            "Dist Squared",
+            "Antigravity",
+            "Super Antigrav"});
             this.listBox3.Location = new System.Drawing.Point(7, 19);
             this.listBox3.Name = "listBox3";
-            this.listBox3.Size = new System.Drawing.Size(120, 56);
+            this.listBox3.Size = new System.Drawing.Size(120, 69);
             this.listBox3.TabIndex = 0;
             this.listBox3.SelectedIndexChanged += new System.EventHandler(this.listBox3_SelectedIndexChanged);
             // 
@@ -629,12 +632,13 @@ namespace SphereDivision
             // groupBox17
             // 
             this.groupBox17.Controls.Add(this.listBox5);
-            this.groupBox17.Location = new System.Drawing.Point(549, 12);
+            this.groupBox17.Location = new System.Drawing.Point(559, 535);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(200, 100);
+            this.groupBox17.Size = new System.Drawing.Size(190, 100);
             this.groupBox17.TabIndex = 6;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Attractor Mode";
+            this.groupBox17.Visible = false;
             // 
             // listBox5
             // 
@@ -644,26 +648,26 @@ namespace SphereDivision
             "Lorenz"});
             this.listBox5.Location = new System.Drawing.Point(6, 24);
             this.listBox5.Name = "listBox5";
-            this.listBox5.Size = new System.Drawing.Size(120, 56);
+            this.listBox5.Size = new System.Drawing.Size(171, 56);
             this.listBox5.TabIndex = 1;
             // 
             // groupBox18
             // 
             this.groupBox18.Controls.Add(this.button8);
-            this.groupBox18.Location = new System.Drawing.Point(767, 21);
+            this.groupBox18.Location = new System.Drawing.Point(559, 149);
             this.groupBox18.Name = "groupBox18";
-            this.groupBox18.Size = new System.Drawing.Size(200, 100);
+            this.groupBox18.Size = new System.Drawing.Size(190, 65);
             this.groupBox18.TabIndex = 7;
             this.groupBox18.TabStop = false;
-            this.groupBox18.Text = "Sound Reactivity";
+            this.groupBox18.Text = "Randomize Settings";
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(56, 38);
+            this.button8.Location = new System.Drawing.Point(11, 19);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(89, 25);
+            this.button8.Size = new System.Drawing.Size(170, 27);
             this.button8.TabIndex = 11;
-            this.button8.Text = "Test";
+            this.button8.Text = "Randomize Now";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
@@ -671,9 +675,9 @@ namespace SphereDivision
             // 
             this.groupBox20.Controls.Add(this.button7);
             this.groupBox20.Controls.Add(this.listBox6);
-            this.groupBox20.Location = new System.Drawing.Point(549, 272);
+            this.groupBox20.Location = new System.Drawing.Point(559, 220);
             this.groupBox20.Name = "groupBox20";
-            this.groupBox20.Size = new System.Drawing.Size(200, 304);
+            this.groupBox20.Size = new System.Drawing.Size(190, 304);
             this.groupBox20.TabIndex = 8;
             this.groupBox20.TabStop = false;
             this.groupBox20.Text = "Presets";
@@ -682,7 +686,7 @@ namespace SphereDivision
             // 
             this.button7.Location = new System.Drawing.Point(10, 273);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(177, 25);
+            this.button7.Size = new System.Drawing.Size(171, 25);
             this.button7.TabIndex = 11;
             this.button7.Text = "Save";
             this.button7.UseVisualStyleBackColor = true;
@@ -695,7 +699,7 @@ namespace SphereDivision
             "Default"});
             this.listBox6.Location = new System.Drawing.Point(10, 19);
             this.listBox6.Name = "listBox6";
-            this.listBox6.Size = new System.Drawing.Size(177, 251);
+            this.listBox6.Size = new System.Drawing.Size(174, 251);
             this.listBox6.TabIndex = 0;
             this.listBox6.SelectedIndexChanged += new System.EventHandler(this.listBox6_SelectedIndexChanged);
             // 
@@ -743,12 +747,25 @@ namespace SphereDivision
             this.groupBox22.Controls.Add(this.groupBox23);
             this.groupBox22.Controls.Add(this.checkBox6);
             this.groupBox22.Controls.Add(this.checkBox5);
-            this.groupBox22.Location = new System.Drawing.Point(559, 118);
+            this.groupBox22.Location = new System.Drawing.Point(559, 12);
             this.groupBox22.Name = "groupBox22";
             this.groupBox22.Size = new System.Drawing.Size(190, 132);
             this.groupBox22.TabIndex = 13;
             this.groupBox22.TabStop = false;
             this.groupBox22.Text = "Auto-Settings";
+            // 
+            // checkBox10
+            // 
+            this.checkBox10.AutoSize = true;
+            this.checkBox10.Checked = true;
+            this.checkBox10.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox10.Location = new System.Drawing.Point(113, 20);
+            this.checkBox10.Name = "checkBox10";
+            this.checkBox10.Size = new System.Drawing.Size(64, 17);
+            this.checkBox10.TabIndex = 8;
+            this.checkBox10.Text = "Explode";
+            this.checkBox10.UseVisualStyleBackColor = true;
+            this.checkBox10.CheckedChanged += new System.EventHandler(this.checkBox10_CheckedChanged);
             // 
             // groupBox23
             // 
@@ -819,24 +836,24 @@ namespace SphereDivision
             this.label2.TabIndex = 15;
             this.label2.Text = "Random";
             // 
-            // checkBox10
+            // linkLabel1
             // 
-            this.checkBox10.AutoSize = true;
-            this.checkBox10.Checked = true;
-            this.checkBox10.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox10.Location = new System.Drawing.Point(113, 20);
-            this.checkBox10.Name = "checkBox10";
-            this.checkBox10.Size = new System.Drawing.Size(64, 17);
-            this.checkBox10.TabIndex = 8;
-            this.checkBox10.Text = "Explode";
-            this.checkBox10.UseVisualStyleBackColor = true;
-            this.checkBox10.CheckedChanged += new System.EventHandler(this.checkBox10_CheckedChanged);
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 18.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLabel1.Location = new System.Drawing.Point(394, 728);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(325, 29);
+            this.linkLabel1.TabIndex = 17;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "Visit Lift Pizzas on youtube!";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(975, 770);
+            this.ClientSize = new System.Drawing.Size(756, 770);
+            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox22);
@@ -853,7 +870,6 @@ namespace SphereDivision
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "Flying Bugs Settings";
-            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -983,5 +999,6 @@ namespace SphereDivision
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox checkBox10;
+        private System.Windows.Forms.LinkLabel linkLabel1;
     }
 }

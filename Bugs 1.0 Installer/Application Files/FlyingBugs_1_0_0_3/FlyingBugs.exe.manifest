@@ -1,0 +1,438 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
+  <asmv1:assemblyIdentity name="FlyingBugs.exe" version="1.0.0.3" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <description asmv2:iconFile="bugs_icon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="FlyingBugs" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <commandLine file="FlyingBugs.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!--
+          UAC Manifest Options
+          If you want to change the Windows User Account Control level replace the
+          requestedExecutionLevel node with one of the following.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+         If you want to utilize File and Registry Virtualization for backward
+         compatibility then delete the requestedExecutionLevel node.
+    -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="FlyingBugs.exe" size="102912">
+      <assemblyIdentity name="FlyingBugs" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>rs9PwTL3Gs6Z6EYFgJdTAnQ5HJ9P56R/vLcR+o5bGVc=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="OpenTK.dll" size="5525504">
+      <assemblyIdentity name="OpenTK" version="3.0.1.0" publicKeyToken="BAD199FE84EB3DF4" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>ASo9L2Lns2IIrjpRD38kcKbC8PRRPF3BlbzlMnxoB+o=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="bugs_icon.ico" size="48214">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>0pgh92jeMZaLOUuWC86syNxsTbu2GmTBvzCmfXymY4w=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\60s Flower Power.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>JWwFisZnrOq6NAHoU7HmQx0ZB/emXnnKM7yQbF1v+xU=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Antiparticles.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>OgZE+X2bp1EfaNH+oRwRfRJGXraKh2Hi1wWnI2uYAn4=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Blizzard.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>qXRjRUMnm9Y0KBbnQkF57OpJksp23YdG0GlQoyJlQk8=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Bowtie Fighters.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>9G0swQxlqZ8b4b93eBgtQZeAOinUOT6wRZIoT+tYnck=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Bubble Confetti.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>NGpOk9vRmt6Ew5vMqGIOijmIWjCu00Mp3egPizoRZAc=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Cable Stayed.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>GVOY4mS5tDSuz5UMcmjP2q/aYuaiFviaT6TZ2pLtK/E=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Cool Attractors.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>XoY28PdeJxpffLAAe1k/jIcjRSWvKHezD4U0Rk+9dZM=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Coronal Mass.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>sVbZzo54gk1hgW7Lhl2vgA/gxS0AOwQhdWSiL2kWj80=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Crystalline Bat.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>6f36ZM/zVta+NJHHXk9WWBrhOgG4dZpsPgc7O9uEhxc=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Cursive.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>sClRTvuIbO5olNvxZxJE0NGSIGVqDLVn/cnw/fxL0EM=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Digital Snowstorm.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>wiC0RoaMKuy8kize8wtTNIU0jEO4oZOxHgS1ThRkA1E=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Echolocation 2.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>XTC/av1TXylj+U1Fy87b7Km5bmCC2gE2HmfjrAPQmqw=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Echolocation.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>CxRLiKay0SXKPSV50ROeet7UmUOIVm+dcRTBOUgbFvw=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Fractural Fans.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>hCgYQLFeKgRqjz7cFBVvG+7yQQSVgkNpaEMv7N1CusI=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Gniffleworms.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>ChoBc1LYU4LCuuxP9MMZRgyNWAST64jZOhZKSTnBAxM=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Harpscape.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>UHgssdqF8Tz9+r0fOOxF7PuEATJ85xO7D8E2rfpYMYc=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Impressionist Moth.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>vhfwqhn9vMWHq9t3yKhcdOz8hpK9SjD7UF9EW8RV6/c=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Jitterbugs.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>0Szyg/sH9YTwSTrmYVshP8v76qH47Hgm+P130y6eYDE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Melty Seaweed.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>Gg+KpJW05fY1i05WmEolXzCrHwANzNVVDYtrZgn+bSQ=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Mystify This.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>wGvGqr2ZotMdY49H5iyZG/J9U+DOiIRciiPl3x/pfB4=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Old Mysty.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>3LpBRwc8wmyyF5cGIP9LN7OKpH5WYyH07sz6cpbJwPU=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Opposticks Attack.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>RfKJXJy2dMfR3j2cE+CnpwpqiNtI5mpBAlU72ieeKWw=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Pulsar Jets.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>yifXL/krvlBn2Mr4MdSdU2ZJngwfttfVw5nynRe7Uv8=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Pyrite Storm.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>9Cd+55NZ10aM32Vhiige6YzqxRYl1BqX9XIBixZLI9k=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Qix Homeworld.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>fBf9KT9iFFkGoCghUB4YtqlQOjAO/ltAeWo7/s7Yrio=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Quartz Ocean.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>IyiP1LmXdhPl9t3WxUp0X6dMBJHLmruyUxHYxJZt8gQ=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\RastaRainbow.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>iDocrrxxAEgI6MPZ286mG4lr5pvwVSbfPnt5T7crq30=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Ribbons.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>7BMMHWWymLOxbLRl9Te0n0VWUaCLgBa3jLFkZHc0QL0=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Rods.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>ZpSZiL0q005jc5DqsGtCtK7QLAjQJJiN4XDxxE+2ShA=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Space Butterfly.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>OKmuXfLy/I7ir+cpP677I52h6IOBsQrZRTdNfnVcCsA=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Space Xylophone.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>Yy40vLJg8QsEnUUhEkFAIOXDznSuCPW7ZZlrPsA10JA=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Sponge Bath.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>ql2opQzowrgqkAtLYkW0PBR4VxZnBDhgLehkTICbcR8=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Sticks and Stones.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>LooqtFwn0ZGP58sQb+B8GosSihA5CGV0rufJfQNp4UE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Toothpick Tosser.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>re9/HBvp7k7eadBduQvKx35l0F9Mp/hUyCExZJHC/JE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Tornado.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>GwXwMdRyHWDR+fLxGG/DerX7ydfuv3V17Rx4Ow8Dcq8=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Twitchy Strings.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>ujrQDyuH/QODZ+Q2r2Woqy1v/y6o8KKGUAk8vpuphz8=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Wicker.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>AbgzCqqqNcdWoZfkTBMLrfviWc6xqoEeO4ZjFsOlv7c=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="configs\Windshield Wipers.bug" size="59">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>8Xqt5lv4V2GDHCIBTimJZzJu+sy2XX4+hvMtTY8yUE0=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="FlyingBugs.exe.config" size="189">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>rl5/qDc7Jz+tB+BIbOv9iMGPlRe6YJwrjmU09dnlPcs=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="sphereicon_PTx_icon.ico" size="50186">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>ZGTGeR3cp6d2WCBELE4HdTl3c2WMjW+fSeGklvK6q5o=</dsig:DigestValue>
+    </hash>
+  </file>
+</asmv1:assembly>
