@@ -34,7 +34,6 @@ namespace SphereDivision
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.trackBar8 = new System.Windows.Forms.TrackBar();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox25 = new System.Windows.Forms.GroupBox();
             this.checkBox8 = new System.Windows.Forms.CheckBox();
             this.checkBox9 = new System.Windows.Forms.CheckBox();
@@ -75,7 +74,6 @@ namespace SphereDivision
             this.trackBar5 = new System.Windows.Forms.TrackBar();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.listBox5 = new System.Windows.Forms.ListBox();
-            this.groupBox18 = new System.Windows.Forms.GroupBox();
             this.button8 = new System.Windows.Forms.Button();
             this.groupBox20 = new System.Windows.Forms.GroupBox();
             this.button7 = new System.Windows.Forms.Button();
@@ -96,11 +94,29 @@ namespace SphereDivision
             this.label2 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox28 = new System.Windows.Forms.GroupBox();
+            this.groupBox27 = new System.Windows.Forms.GroupBox();
+            this.groupBox18 = new System.Windows.Forms.GroupBox();
+            this.trackBar11 = new System.Windows.Forms.TrackBar();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.trackBar10 = new System.Windows.Forms.TrackBar();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.label3 = new System.Windows.Forms.Label();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
+            this.htSlider1 = new HTAlt.WinForms.HTSlider();
+            this.htSlider2 = new HTAlt.WinForms.HTSlider();
+            this.htSlider3 = new HTAlt.WinForms.HTSlider();
+            this.htSlider4 = new HTAlt.WinForms.HTSlider();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar8)).BeginInit();
-            this.groupBox3.SuspendLayout();
             this.groupBox25.SuspendLayout();
             this.groupBox26.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar9)).BeginInit();
@@ -129,17 +145,28 @@ namespace SphereDivision
             this.groupBox16.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar5)).BeginInit();
             this.groupBox17.SuspendLayout();
-            this.groupBox18.SuspendLayout();
             this.groupBox20.SuspendLayout();
             this.groupBox22.SuspendLayout();
             this.groupBox23.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.groupBox28.SuspendLayout();
+            this.groupBox27.SuspendLayout();
+            this.groupBox18.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar11)).BeginInit();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar10)).BeginInit();
+            this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.tabPage6.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.trackBar1);
-            this.groupBox1.Location = new System.Drawing.Point(6, 19);
+            this.groupBox1.Location = new System.Drawing.Point(6, 15);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(138, 57);
             this.groupBox1.TabIndex = 0;
@@ -179,30 +206,12 @@ namespace SphereDivision
             this.trackBar8.Value = 4;
             this.trackBar8.ValueChanged += new System.EventHandler(this.changeGravPoints);
             // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.groupBox25);
-            this.groupBox3.Controls.Add(this.groupBox24);
-            this.groupBox3.Controls.Add(this.groupBox19);
-            this.groupBox3.Controls.Add(this.groupBox12);
-            this.groupBox3.Controls.Add(this.groupBox8);
-            this.groupBox3.Controls.Add(this.groupBox6);
-            this.groupBox3.Controls.Add(this.groupBox5);
-            this.groupBox3.Controls.Add(this.groupBox4);
-            this.groupBox3.Controls.Add(this.groupBox1);
-            this.groupBox3.Location = new System.Drawing.Point(12, 12);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(322, 755);
-            this.groupBox3.TabIndex = 2;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Critters";
-            // 
             // groupBox25
             // 
             this.groupBox25.Controls.Add(this.checkBox8);
             this.groupBox25.Controls.Add(this.checkBox9);
             this.groupBox25.Controls.Add(this.groupBox26);
-            this.groupBox25.Location = new System.Drawing.Point(8, 564);
+            this.groupBox25.Location = new System.Drawing.Point(347, 121);
             this.groupBox25.Name = "groupBox25";
             this.groupBox25.Size = new System.Drawing.Size(309, 104);
             this.groupBox25.TabIndex = 7;
@@ -258,7 +267,7 @@ namespace SphereDivision
             // groupBox24
             // 
             this.groupBox24.Controls.Add(this.trackBar7);
-            this.groupBox24.Location = new System.Drawing.Point(6, 216);
+            this.groupBox24.Location = new System.Drawing.Point(6, 219);
             this.groupBox24.Name = "groupBox24";
             this.groupBox24.Size = new System.Drawing.Size(309, 71);
             this.groupBox24.TabIndex = 6;
@@ -280,7 +289,7 @@ namespace SphereDivision
             // groupBox19
             // 
             this.groupBox19.Controls.Add(this.trackBar6);
-            this.groupBox19.Location = new System.Drawing.Point(8, 674);
+            this.groupBox19.Location = new System.Drawing.Point(347, 239);
             this.groupBox19.Name = "groupBox19";
             this.groupBox19.Size = new System.Drawing.Size(309, 71);
             this.groupBox19.TabIndex = 5;
@@ -303,7 +312,7 @@ namespace SphereDivision
             this.groupBox12.Controls.Add(this.checkBox4);
             this.groupBox12.Controls.Add(this.checkBox3);
             this.groupBox12.Controls.Add(this.groupBox13);
-            this.groupBox12.Location = new System.Drawing.Point(8, 454);
+            this.groupBox12.Location = new System.Drawing.Point(347, 9);
             this.groupBox12.Name = "groupBox12";
             this.groupBox12.Size = new System.Drawing.Size(309, 104);
             this.groupBox12.TabIndex = 4;
@@ -358,7 +367,7 @@ namespace SphereDivision
             // groupBox8
             // 
             this.groupBox8.Controls.Add(this.trackBarTrailLength);
-            this.groupBox8.Location = new System.Drawing.Point(6, 139);
+            this.groupBox8.Location = new System.Drawing.Point(6, 142);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(309, 71);
             this.groupBox8.TabIndex = 3;
@@ -382,7 +391,7 @@ namespace SphereDivision
             // 
             this.groupBox6.Controls.Add(this.groupBox7);
             this.groupBox6.Controls.Add(this.listBox2);
-            this.groupBox6.Location = new System.Drawing.Point(8, 293);
+            this.groupBox6.Location = new System.Drawing.Point(7, 296);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(308, 150);
             this.groupBox6.TabIndex = 3;
@@ -427,7 +436,7 @@ namespace SphereDivision
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.checkBox1);
-            this.groupBox5.Location = new System.Drawing.Point(6, 82);
+            this.groupBox5.Location = new System.Drawing.Point(6, 85);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(138, 42);
             this.groupBox5.TabIndex = 3;
@@ -449,7 +458,7 @@ namespace SphereDivision
             // 
             this.groupBox4.Controls.Add(this.groupBox21);
             this.groupBox4.Controls.Add(this.listBoxDrawingStyle);
-            this.groupBox4.Location = new System.Drawing.Point(150, 9);
+            this.groupBox4.Location = new System.Drawing.Point(150, 5);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(146, 134);
             this.groupBox4.TabIndex = 3;
@@ -500,7 +509,7 @@ namespace SphereDivision
             this.groupBox9.Controls.Add(this.checkBox2);
             this.groupBox9.Controls.Add(this.groupBox10);
             this.groupBox9.Controls.Add(this.groupBox2);
-            this.groupBox9.Location = new System.Drawing.Point(343, 127);
+            this.groupBox9.Location = new System.Drawing.Point(3, 3);
             this.groupBox9.Name = "groupBox9";
             this.groupBox9.Size = new System.Drawing.Size(200, 274);
             this.groupBox9.TabIndex = 4;
@@ -580,7 +589,7 @@ namespace SphereDivision
             // 
             this.groupBox14.Controls.Add(this.groupBox15);
             this.groupBox14.Controls.Add(this.groupBox16);
-            this.groupBox14.Location = new System.Drawing.Point(343, 466);
+            this.groupBox14.Location = new System.Drawing.Point(209, 3);
             this.groupBox14.Name = "groupBox14";
             this.groupBox14.Size = new System.Drawing.Size(200, 169);
             this.groupBox14.TabIndex = 5;
@@ -634,7 +643,7 @@ namespace SphereDivision
             // groupBox17
             // 
             this.groupBox17.Controls.Add(this.listBox5);
-            this.groupBox17.Location = new System.Drawing.Point(559, 535);
+            this.groupBox17.Location = new System.Drawing.Point(34, 46);
             this.groupBox17.Name = "groupBox17";
             this.groupBox17.Size = new System.Drawing.Size(190, 100);
             this.groupBox17.TabIndex = 6;
@@ -653,19 +662,9 @@ namespace SphereDivision
             this.listBox5.Size = new System.Drawing.Size(171, 56);
             this.listBox5.TabIndex = 1;
             // 
-            // groupBox18
-            // 
-            this.groupBox18.Controls.Add(this.button8);
-            this.groupBox18.Location = new System.Drawing.Point(559, 149);
-            this.groupBox18.Name = "groupBox18";
-            this.groupBox18.Size = new System.Drawing.Size(190, 65);
-            this.groupBox18.TabIndex = 7;
-            this.groupBox18.TabStop = false;
-            this.groupBox18.Text = "Randomize Settings";
-            // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(11, 19);
+            this.button8.Location = new System.Drawing.Point(7, 137);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(170, 27);
             this.button8.TabIndex = 11;
@@ -677,7 +676,7 @@ namespace SphereDivision
             // 
             this.groupBox20.Controls.Add(this.button7);
             this.groupBox20.Controls.Add(this.listBox6);
-            this.groupBox20.Location = new System.Drawing.Point(559, 220);
+            this.groupBox20.Location = new System.Drawing.Point(12, 319);
             this.groupBox20.Name = "groupBox20";
             this.groupBox20.Size = new System.Drawing.Size(190, 304);
             this.groupBox20.TabIndex = 8;
@@ -707,7 +706,7 @@ namespace SphereDivision
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(349, 21);
+            this.button5.Location = new System.Drawing.Point(12, 12);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(89, 25);
             this.button5.TabIndex = 9;
@@ -717,7 +716,7 @@ namespace SphereDivision
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(448, 21);
+            this.button6.Location = new System.Drawing.Point(12, 43);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(89, 25);
             this.button6.TabIndex = 10;
@@ -728,7 +727,7 @@ namespace SphereDivision
             // labelFPS
             // 
             this.labelFPS.AutoSize = true;
-            this.labelFPS.Location = new System.Drawing.Point(353, 60);
+            this.labelFPS.Location = new System.Drawing.Point(119, 18);
             this.labelFPS.Name = "labelFPS";
             this.labelFPS.Size = new System.Drawing.Size(30, 13);
             this.labelFPS.TabIndex = 11;
@@ -737,7 +736,7 @@ namespace SphereDivision
             // labelMS
             // 
             this.labelMS.AutoSize = true;
-            this.labelMS.Location = new System.Drawing.Point(445, 59);
+            this.labelMS.Location = new System.Drawing.Point(120, 49);
             this.labelMS.Name = "labelMS";
             this.labelMS.Size = new System.Drawing.Size(29, 13);
             this.labelMS.TabIndex = 12;
@@ -745,13 +744,14 @@ namespace SphereDivision
             // 
             // groupBox22
             // 
+            this.groupBox22.Controls.Add(this.button8);
             this.groupBox22.Controls.Add(this.checkBox10);
             this.groupBox22.Controls.Add(this.groupBox23);
             this.groupBox22.Controls.Add(this.checkBox6);
             this.groupBox22.Controls.Add(this.checkBox5);
-            this.groupBox22.Location = new System.Drawing.Point(559, 12);
+            this.groupBox22.Location = new System.Drawing.Point(12, 135);
             this.groupBox22.Name = "groupBox22";
-            this.groupBox22.Size = new System.Drawing.Size(190, 132);
+            this.groupBox22.Size = new System.Drawing.Size(190, 178);
             this.groupBox22.TabIndex = 13;
             this.groupBox22.TabStop = false;
             this.groupBox22.Text = "Auto-Settings";
@@ -823,7 +823,7 @@ namespace SphereDivision
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(353, 82);
+            this.label1.Location = new System.Drawing.Point(120, 80);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(40, 13);
             this.label1.TabIndex = 14;
@@ -832,7 +832,7 @@ namespace SphereDivision
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(353, 99);
+            this.label2.Location = new System.Drawing.Point(19, 110);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(47, 13);
             this.label2.TabIndex = 15;
@@ -842,7 +842,7 @@ namespace SphereDivision
             // 
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 18.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel1.Location = new System.Drawing.Point(394, 728);
+            this.linkLabel1.Location = new System.Drawing.Point(294, 586);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(325, 29);
             this.linkLabel1.TabIndex = 17;
@@ -854,7 +854,7 @@ namespace SphereDivision
             // 
             this.linkLabel2.AutoSize = true;
             this.linkLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel2.Location = new System.Drawing.Point(395, 686);
+            this.linkLabel2.Location = new System.Drawing.Point(295, 552);
             this.linkLabel2.Name = "linkLabel2";
             this.linkLabel2.Size = new System.Drawing.Size(310, 20);
             this.linkLabel2.TabIndex = 18;
@@ -862,26 +862,265 @@ namespace SphereDivision
             this.linkLabel2.Text = "https://github.com/LiftPizzas/FlyingBugs";
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tabPage5);
+            this.tabControl1.Controls.Add(this.tabPage6);
+            this.tabControl1.Location = new System.Drawing.Point(208, 12);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(682, 523);
+            this.tabControl1.TabIndex = 19;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.groupBox28);
+            this.tabPage1.Controls.Add(this.groupBox27);
+            this.tabPage1.Controls.Add(this.groupBox18);
+            this.tabPage1.Controls.Add(this.groupBox3);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(674, 497);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Speed Control";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox28
+            // 
+            this.groupBox28.Controls.Add(this.htSlider3);
+            this.groupBox28.Controls.Add(this.htSlider4);
+            this.groupBox28.Location = new System.Drawing.Point(12, 255);
+            this.groupBox28.Name = "groupBox28";
+            this.groupBox28.Size = new System.Drawing.Size(301, 59);
+            this.groupBox28.TabIndex = 7;
+            this.groupBox28.TabStop = false;
+            this.groupBox28.Text = "Gravpoint Speed Limits";
+            // 
+            // groupBox27
+            // 
+            this.groupBox27.Controls.Add(this.htSlider2);
+            this.groupBox27.Controls.Add(this.htSlider1);
+            this.groupBox27.Location = new System.Drawing.Point(12, 187);
+            this.groupBox27.Name = "groupBox27";
+            this.groupBox27.Size = new System.Drawing.Size(301, 62);
+            this.groupBox27.TabIndex = 6;
+            this.groupBox27.TabStop = false;
+            this.groupBox27.Text = "Critter Speed Limits";
+            // 
+            // groupBox18
+            // 
+            this.groupBox18.Controls.Add(this.trackBar11);
+            this.groupBox18.Location = new System.Drawing.Point(12, 14);
+            this.groupBox18.Name = "groupBox18";
+            this.groupBox18.Size = new System.Drawing.Size(301, 71);
+            this.groupBox18.TabIndex = 5;
+            this.groupBox18.TabStop = false;
+            this.groupBox18.Text = "Time Scaling";
+            // 
+            // trackBar11
+            // 
+            this.trackBar11.Location = new System.Drawing.Point(6, 19);
+            this.trackBar11.Maximum = 200;
+            this.trackBar11.Name = "trackBar11";
+            this.trackBar11.Size = new System.Drawing.Size(284, 45);
+            this.trackBar11.TabIndex = 4;
+            this.trackBar11.TickFrequency = 25;
+            this.trackBar11.Value = 100;
+            this.trackBar11.ValueChanged += new System.EventHandler(this.trackBar11_ValueChanged);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.trackBar10);
+            this.groupBox3.Location = new System.Drawing.Point(12, 101);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(301, 71);
+            this.groupBox3.TabIndex = 4;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Max Deltatime (100ms)";
+            // 
+            // trackBar10
+            // 
+            this.trackBar10.Location = new System.Drawing.Point(6, 19);
+            this.trackBar10.Maximum = 200;
+            this.trackBar10.Minimum = 1;
+            this.trackBar10.Name = "trackBar10";
+            this.trackBar10.Size = new System.Drawing.Size(284, 45);
+            this.trackBar10.TabIndex = 4;
+            this.trackBar10.TickFrequency = 20;
+            this.trackBar10.Value = 100;
+            this.trackBar10.ValueChanged += new System.EventHandler(this.trackBar10_ValueChanged);
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage2.Controls.Add(this.groupBox24);
+            this.tabPage2.Controls.Add(this.groupBox25);
+            this.tabPage2.Controls.Add(this.groupBox8);
+            this.tabPage2.Controls.Add(this.groupBox19);
+            this.tabPage2.Controls.Add(this.groupBox5);
+            this.tabPage2.Controls.Add(this.groupBox6);
+            this.tabPage2.Controls.Add(this.groupBox12);
+            this.tabPage2.Controls.Add(this.groupBox4);
+            this.tabPage2.Controls.Add(this.groupBox1);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(674, 497);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Critters";
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.groupBox9);
+            this.tabPage3.Controls.Add(this.groupBox14);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(674, 497);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Gravity";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.label3);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(674, 497);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Explosions";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(7, 12);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(408, 13);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Explosions and transitions can be used for transitions between settings, or just " +
+    "for fun.";
+            // 
+            // tabPage5
+            // 
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Size = new System.Drawing.Size(674, 497);
+            this.tabPage5.TabIndex = 4;
+            this.tabPage5.Text = "Rendering";
+            this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(this.groupBox17);
+            this.tabPage6.Location = new System.Drawing.Point(4, 22);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Size = new System.Drawing.Size(674, 497);
+            this.tabPage6.TabIndex = 5;
+            this.tabPage6.Text = "Experimental";
+            this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(12, 74);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(89, 25);
+            this.button1.TabIndex = 16;
+            this.button1.Text = "Tick Once";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            // 
+            // htSlider1
+            // 
+            this.htSlider1.BackColor = System.Drawing.Color.White;
+            this.htSlider1.BorderRoundRectSize = new System.Drawing.Size(8, 8);
+            this.htSlider1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.htSlider1.ForeColor = System.Drawing.Color.Black;
+            this.htSlider1.LargeChange = ((uint)(5u));
+            this.htSlider1.Location = new System.Drawing.Point(6, 19);
+            this.htSlider1.Name = "htSlider1";
+            this.htSlider1.OverlayColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(157)))), ((int)(((byte)(204)))));
+            this.htSlider1.Size = new System.Drawing.Size(284, 23);
+            this.htSlider1.SmallChange = ((uint)(1u));
+            this.htSlider1.TabIndex = 8;
+            this.htSlider1.Text = "htSlider1";
+            this.htSlider1.ThumbRoundRectSize = new System.Drawing.Size(16, 16);
+            this.htSlider1.ThumbSize = new System.Drawing.Size(16, 16);
+            // 
+            // htSlider2
+            // 
+            this.htSlider2.BackColor = System.Drawing.Color.White;
+            this.htSlider2.BorderRoundRectSize = new System.Drawing.Size(8, 8);
+            this.htSlider2.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.htSlider2.ForeColor = System.Drawing.Color.Black;
+            this.htSlider2.LargeChange = ((uint)(5u));
+            this.htSlider2.Location = new System.Drawing.Point(6, 39);
+            this.htSlider2.Name = "htSlider2";
+            this.htSlider2.OverlayColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(157)))), ((int)(((byte)(204)))));
+            this.htSlider2.Size = new System.Drawing.Size(284, 23);
+            this.htSlider2.SmallChange = ((uint)(1u));
+            this.htSlider2.TabIndex = 9;
+            this.htSlider2.Text = "htSlider2";
+            this.htSlider2.ThumbRoundRectSize = new System.Drawing.Size(16, 16);
+            this.htSlider2.ThumbSize = new System.Drawing.Size(16, 16);
+            this.htSlider2.Value = 60;
+            // 
+            // htSlider3
+            // 
+            this.htSlider3.BackColor = System.Drawing.Color.White;
+            this.htSlider3.BorderRoundRectSize = new System.Drawing.Size(8, 8);
+            this.htSlider3.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.htSlider3.ForeColor = System.Drawing.Color.Black;
+            this.htSlider3.LargeChange = ((uint)(5u));
+            this.htSlider3.Location = new System.Drawing.Point(8, 33);
+            this.htSlider3.Name = "htSlider3";
+            this.htSlider3.OverlayColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(157)))), ((int)(((byte)(204)))));
+            this.htSlider3.Size = new System.Drawing.Size(284, 23);
+            this.htSlider3.SmallChange = ((uint)(1u));
+            this.htSlider3.TabIndex = 11;
+            this.htSlider3.Text = "htSlider3";
+            this.htSlider3.ThumbRoundRectSize = new System.Drawing.Size(16, 16);
+            this.htSlider3.ThumbSize = new System.Drawing.Size(16, 16);
+            this.htSlider3.Value = 60;
+            // 
+            // htSlider4
+            // 
+            this.htSlider4.BackColor = System.Drawing.Color.White;
+            this.htSlider4.BorderRoundRectSize = new System.Drawing.Size(8, 8);
+            this.htSlider4.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.htSlider4.ForeColor = System.Drawing.Color.Black;
+            this.htSlider4.LargeChange = ((uint)(5u));
+            this.htSlider4.Location = new System.Drawing.Point(8, 13);
+            this.htSlider4.Name = "htSlider4";
+            this.htSlider4.OverlayColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(157)))), ((int)(((byte)(204)))));
+            this.htSlider4.Size = new System.Drawing.Size(284, 23);
+            this.htSlider4.SmallChange = ((uint)(1u));
+            this.htSlider4.TabIndex = 10;
+            this.htSlider4.Text = "htSlider4";
+            this.htSlider4.ThumbRoundRectSize = new System.Drawing.Size(16, 16);
+            this.htSlider4.ThumbSize = new System.Drawing.Size(16, 16);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(756, 770);
-            this.Controls.Add(this.linkLabel2);
-            this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.ClientSize = new System.Drawing.Size(909, 635);
             this.Controls.Add(this.groupBox22);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.linkLabel2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.labelMS);
             this.Controls.Add(this.labelFPS);
             this.Controls.Add(this.button6);
-            this.Controls.Add(this.button5);
             this.Controls.Add(this.groupBox20);
-            this.Controls.Add(this.groupBox18);
-            this.Controls.Add(this.groupBox17);
-            this.Controls.Add(this.groupBox14);
-            this.Controls.Add(this.groupBox9);
-            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.button5);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
@@ -895,7 +1134,6 @@ namespace SphereDivision
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar8)).EndInit();
-            this.groupBox3.ResumeLayout(false);
             this.groupBox25.ResumeLayout(false);
             this.groupBox25.PerformLayout();
             this.groupBox26.ResumeLayout(false);
@@ -937,13 +1175,27 @@ namespace SphereDivision
             this.groupBox16.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar5)).EndInit();
             this.groupBox17.ResumeLayout(false);
-            this.groupBox18.ResumeLayout(false);
             this.groupBox20.ResumeLayout(false);
             this.groupBox22.ResumeLayout(false);
             this.groupBox22.PerformLayout();
             this.groupBox23.ResumeLayout(false);
             this.groupBox23.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.groupBox28.ResumeLayout(false);
+            this.groupBox27.ResumeLayout(false);
+            this.groupBox18.ResumeLayout(false);
+            this.groupBox18.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar11)).EndInit();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar10)).EndInit();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
+            this.tabPage6.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -953,7 +1205,6 @@ namespace SphereDivision
 
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.TrackBar trackBarTrailLength;
         private System.Windows.Forms.GroupBox groupBox6;
@@ -980,7 +1231,6 @@ namespace SphereDivision
         private System.Windows.Forms.GroupBox groupBox16;
         private System.Windows.Forms.TrackBar trackBar5;
         private System.Windows.Forms.GroupBox groupBox17;
-        private System.Windows.Forms.GroupBox groupBox18;
         private System.Windows.Forms.ListBox listBox5;
         private System.Windows.Forms.GroupBox groupBox19;
         private System.Windows.Forms.TrackBar trackBar6;
@@ -1017,5 +1267,24 @@ namespace SphereDivision
         private System.Windows.Forms.CheckBox checkBox10;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.LinkLabel linkLabel2;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TabPage tabPage5;
+        private System.Windows.Forms.TabPage tabPage6;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.TrackBar trackBar10;
+        private System.Windows.Forms.GroupBox groupBox18;
+        private System.Windows.Forms.TrackBar trackBar11;
+        private System.Windows.Forms.GroupBox groupBox28;
+        private System.Windows.Forms.GroupBox groupBox27;
+        private HTAlt.WinForms.HTSlider htSlider3;
+        private HTAlt.WinForms.HTSlider htSlider4;
+        private HTAlt.WinForms.HTSlider htSlider2;
+        private HTAlt.WinForms.HTSlider htSlider1;
     }
 }

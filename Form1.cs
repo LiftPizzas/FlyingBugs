@@ -170,10 +170,10 @@ namespace SphereDivision
         /// <param name="fps"></param>
         /// <param name="deltaTime"></param>
 
-        public void showFPS(int fps, long deltaTime)
+        public void showFPS(int fps, float deltaTime)
         {
             labelFPS.Text = fps.ToString() + " fps";
-            labelMS.Text = deltaTime.ToString() + " ms";
+            labelMS.Text = ((int)deltaTime).ToString() + " ms";
         }
 
         /// <summary>
@@ -675,6 +675,47 @@ namespace SphereDivision
         {
             System.Diagnostics.Process.Start("https://github.com/LiftPizzas/FlyingBugs" as string);
         
+        }
+
+        public bool tickOnce = false;
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            tickOnce = true;
+            paused = true;
+        }
+
+
+        public int deltaTimeLimit = 100;
+        private void trackBar10_ValueChanged(object sender, EventArgs e)
+        {
+            deltaTimeLimit = trackBar10.Value;
+            groupBox3.Text = "Max Deltatime (" + deltaTimeLimit + " ms)";
+        }
+
+        public float timeScale = 1f;
+        private void trackBar11_ValueChanged(object sender, EventArgs e)
+        {
+            if (trackBar11.Value == 100)
+            {
+                timeScale = 1f;
+                return;
+            }
+
+            double t = ((double)trackBar11.Value);
+            if (t > 100d)
+            {
+                t -= 100d;
+                timeScale = 1f + (float)((t * t * t) / 10000d);
+            }
+            else
+            {
+                t = 100d - t;
+                timeScale =(float)( (100d - t)/100d);
+                if (timeScale == 0f) timeScale = 0.01f;
+            }
+            
+            groupBox18.Text = "Time Scale " + timeScale.ToString("0.00");
+
         }
     }
 }
